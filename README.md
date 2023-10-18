@@ -23,6 +23,14 @@ Modulos utilizados:
 * flask-mysqldb
 * PyJWT
 * flask-cors
+Para inicializar un entorno virtual:
+```
+py -3 -m venv .venv
+```
+Para activar este entorno virtual:
+```
+.venv\Scripts\activate
+```
 Para instalar dependencias (detro de la ruta ./server):
 ```
 pip install -r requirements.txt
