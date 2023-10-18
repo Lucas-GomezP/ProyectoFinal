@@ -8,8 +8,8 @@
   - [Backend](#Backend)
   - [Frontend](#Frontend)
 - [Ejecución](#Ejecución)
-  - [Backend](#Backend)
-  - [Frontend](#Frontend)
+  - [Server](#Server)
+  - [Client](#Client)
 - [Tests](#Tests)
 
 ## Integrantes
@@ -64,14 +64,14 @@ npm run dev
 ## Ejecución
 En cualquier caso primero se debe realizar la ejecucion del backend para luego ejecutar el frontend.
 
-### Backend
+### Server
 1. Desde la ruta ./server :
 ```bash
 py app.py
 ```
 2. El backend estara disponible en http://localhost:4500
 
-### Frontend
+### Client
 1. Desde la ruta ./client :
 ```bash
 npm run dev
