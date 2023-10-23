@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS clientes(
     id_cliente INT(10) NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL
     PRIMARY KEY (id),
-    id_user INT(10),
-    FOREIGN KEY(id_user) REFERENCES users(id_usuario) 
+    id_usuario INT(10),
+    FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario) 
 );
 
 CREATE TABLE IF NOT EXISTS oferta(
