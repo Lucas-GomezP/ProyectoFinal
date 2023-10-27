@@ -1,9 +1,9 @@
 import { Menu } from '../components/Menu'
 
-export const Dashboard = () => {
+export const Products = () => {
   return (
     <>
-      <Menu>Dashboard</Menu>
+      <Menu>Productos</Menu>
     </>
   )
 }
