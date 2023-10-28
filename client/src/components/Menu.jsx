@@ -17,10 +17,10 @@ export const Menu = ({ children }) => {
         >
           <nav className='w-40 bg-gray-200 h-screen p-4'>
             <ul className='flex gap-2 flex-col'>
-              <ItemMenu route='#' icon={<IconDashboard />}>Dashboard</ItemMenu>
-              <ItemMenu route='#' icon={<IconProducts />}>Productos</ItemMenu>
-              <ItemMenu route='#' icon={<IconClient />}>Clientes</ItemMenu>
-              <ItemMenu route='#' icon={<IconBills />}>Facturas</ItemMenu>
+              <ItemMenu route='/dashboard' icon={<IconDashboard />}>Dashboard</ItemMenu>
+              <ItemMenu route='/products' icon={<IconProducts />}>Productos</ItemMenu>
+              <ItemMenu route='/clients' icon={<IconClient />}>Clientes</ItemMenu>
+              <ItemMenu route='/bills' icon={<IconBills />}>Facturas</ItemMenu>
             </ul>
           </nav>
         </aside>
