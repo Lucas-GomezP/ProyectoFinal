@@ -20,6 +20,7 @@ class Factura():
         }
     
 class ElementoDetalleFactura:
+    #tipo de dato de la lista de facturas
     def __init__(self, id_detalle_factura, id_factura, id_oferta, importe, detalle):
         self.id_detalle_factura = id_detalle_factura
         self.id_factura = id_factura
@@ -28,6 +29,7 @@ class ElementoDetalleFactura:
         self.detalle = detalle
 
 class ListadoElementoDetalleFactura:
+    #lista del detalle de la factura y sus metodos
     def __init__(self):
         self._elementos = []
 
