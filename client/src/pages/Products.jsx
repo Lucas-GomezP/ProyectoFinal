@@ -14,20 +14,20 @@ export const Products = () => {
           : data &&
             <table className='table-auto'>
               <thead>
-                <tr className=' bg-slate-100 text-slate-500'>
+                <tr className=' bg-slate-100 text-slate-500 border-b border-slate-200'>
                   <th className='p-2'>Nombre</th>
                   <th className='p-2'>Stock</th>
-                  <th className='p-2'>Descripcion</th>
+                  <th className='p-2 hidden md:block'>Descripcion</th>
                   <th className='p-2'>Precio</th>
                 </tr>
               </thead>
               <tbody>
                 {data.map((product) => {
                   return (
-                    <tr key={product.id} className='text-clip overflow-hidden border-b-2 border-slate-100'>
-                      <td className='py-1 px-2'>{product.name}</td>
+                    <tr key={product.id} className=' text-clip overflow-hidden border-b border-slate-200 hover:bg-slate-200 hover:cursor-pointer'>
+                      <td className='py-1 px-2 truncate'>{product.name}</td>
                       <td className='text-center'>{product.stock}</td>
-                      <td className='line-clamp-1'>{product.description}</td>
+                      <td className='line-clamp-1 hidden md:block'>{product.description}</td>
                       <td className='text-center'>{product.price}</td>
                     </tr>
                   )

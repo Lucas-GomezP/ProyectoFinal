@@ -11,6 +11,9 @@
   - [Server](#Server)
   - [Client](#Client)
 - [Tests](#Tests)
+- [Directorios](#Directorios)
+  - [Backend](#Backend)
+  - [Frontend](#Frontend)
 
 ## Integrantes
 * Alejandro Grosso
@@ -52,6 +55,9 @@ pip install -r requirements.txt
 
 ### Frontend
 * Framework: React (con Vite como empaquetador)
+* Tailwind CSS 3
+* React Router DOM
+
 1. Para instalar dependencias (dentro de la ruta ./client):
 ```bash
 npm install
@@ -76,8 +82,83 @@ py app.py
 ```bash
 npm run dev
 ```
-2. Acceder a la ruta dada (ej. http://localhost:5143)
+2. Acceder a la ruta dada (ej. http://localhost:5173)
 
 ## Tests
 En thunder client, importar el archivo llamado "thunder-collection_ProyectoFinal.json".
 En ese archivo se debera guardar la informacion de los test para las colecciones.
+
+## Directorios
+Se empleao un sistema de archivos en particular para cada seccion del proyecto
+
+### Backend
+```
+server/
+|
+|-- .venv/
+|
+|-- api/
+|   |-- db/              <- configuracion de la base de datos
+|   |   |-- db.py
+|   |
+|   |-- models/          <- modelos para formatear datos, clases
+|   |   |-- client.py
+|   |   |-- user.py
+|   |   |-- ...
+|   |
+|   |-- routes/          <- rutas, todo el crud, loging, logica para las rutas
+|   |   |-- client.py
+|   |   |-- user.py
+|   |   |-- ...
+|   |
+|   |-- __init__.py      <- realizamos las conecciones para que crear la api en si
+|   |-- utils.py         <- funcionalidades generales, como wrapers, token, recursos
+|
+|-- main.py              <- punto de inicio donde lanzamos la aplicacion
+|-- db_init.sql          <- datos de inicio de la base de datos
+|-- requirements.txt
+```
+
+### Frontend
+```
+client/
+|
+|-- node_modules/
+|
+|-- public/              <- recursos multimedia publicos
+|   |-- ...
+|
+|-- src/
+|   |-- assets/          <- archivos multimedia generales para visualizar
+|   |   |-- ...
+|   |
+|   |-- components/      <- componentes de react con la logica interna de cada uno
+|   |   |-- Header.jsx
+|   |   |-- Icons.jsx
+|   |   |-- Loader.jssx
+|   |   |-- Menu.jsx
+|   |
+|   |-- hooks/           <- custom hooks
+|   |   |-- useFetch.jsx
+|   |
+|   |-- pages/           <- paginas de cada seccion
+|   |   |-- Bills.jsx
+|   |   |-- Clients.jsx
+|   |   |-- Dashboard.jsx
+|   |   |-- Products.jsx
+|   |
+|   |-- routes/          <- logica de las rutas de redireccion y URL de la API
+|   |   |-- apiUrl.js
+|   |   |-- routes.jsx
+|   |
+|   |-- index.css
+|   |-- main.jsx         <- punto de entrada de la aplicacion
+|
+|-- .eslintrc.cjs
+|-- index.html
+|-- papckage-lock.json
+|-- package.json
+|-- postcss.config.js
+|-- tailwind.config.js
+|-- vite.config.js
+```
