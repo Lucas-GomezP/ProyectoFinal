@@ -2,12 +2,12 @@
 import { Menu } from '../components/Menu'
 import { Loader } from '../components/Loader'
 import { useFetch } from '../hooks/useFetch'
-import { useShowingData } from '../hooks/useShowingData'
 import { TablePagesFooter } from '../components/TablePagesFooter'
+import { useState } from 'react'
 
 export const Products = () => {
   const { data, isPending } = useFetch({ endpoint: 'products' })
-  const { showingData } = useShowingData({ data })
+  const [showingData, setShowingData] = useState()
 
   return (
     <>
@@ -37,7 +37,7 @@ export const Products = () => {
               })}
             </tbody>
           </table>}
-        <TablePagesFooter isPending={isPending} data={data} />
+        <TablePagesFooter isPending={isPending} data={data} updateShowingData={setShowingData} />
       </Menu>
     </>
   )

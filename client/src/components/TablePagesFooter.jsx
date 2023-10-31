@@ -1,8 +1,15 @@
 /* eslint-disable react/jsx-closing-tag-location */
+import { useEffect } from 'react'
 import { useShowingData } from '../hooks/useShowingData'
 
-export const TablePagesFooter = ({ isPending, data }) => {
-  const { countPagesData, currentPageData, handlePrePage, handleNextPage, handleSetCurrentPage } = useShowingData({ data })
+export const TablePagesFooter = ({ isPending, data, updateShowingData }) => {
+  const { showingData, countPagesData, currentPageData, handlePrePage, handleNextPage, handleSetCurrentPage } = useShowingData({ data })
+
+  useEffect(() => {
+    const newData = showingData
+    updateShowingData(newData)
+  }, [showingData, updateShowingData])
+
   return (
     isPending
       ? ''
