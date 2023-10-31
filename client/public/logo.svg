@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 300 300" style="enable-background:new 0 0 300 300;" xml:space="preserve">
+<style type="text/css">
+	.st0{display:none;}
+	.st1{display:inline;opacity:0.5;}
+	.st2{fill:none;stroke:#1D1D1B;stroke-miterlimit:10;}
+	.st3{clip-path:url(#SVGID_2_);fill:#A855F7;}
+	.st4{clip-path:url(#SVGID_2_);fill:#DADADA;}
+	.st5{clip-path:url(#SVGID_2_);fill:#FFFFFF;}
+	.st6{clip-path:url(#SVGID_2_);fill:#FFED00;}
+</style>
+<g id="Capa_1">
+</g>
+<g id="Capa_2" class="st0">
+	<g class="st1">
+		<line class="st2" x1="0" y1="0" x2="300" y2="0"/>
+		<line class="st2" x1="0" y1="75" x2="300" y2="75"/>
+		<line class="st2" x1="0" y1="300" x2="300" y2="300"/>
+		<line class="st2" x1="0" y1="150" x2="300" y2="150"/>
+		<line class="st2" x1="0" y1="225" x2="300" y2="225"/>
+		<line class="st2" x1="0" y1="262.5" x2="300" y2="262.5"/>
+		<line class="st2" x1="0" y1="187.5" x2="300" y2="187.5"/>
+		<line class="st2" x1="0" y1="112.5" x2="300" y2="112.5"/>
+		<line class="st2" x1="0" y1="37.5" x2="300" y2="37.5"/>
+	</g>
+	<g class="st1">
+		<line class="st2" x1="300" y1="0" x2="300" y2="300"/>
+		<line class="st2" x1="225" y1="0" x2="225" y2="300"/>
+		<line class="st2" x1="0" y1="0" x2="0" y2="300"/>
+		<line class="st2" x1="150" y1="0" x2="150" y2="300"/>
+		<line class="st2" x1="75" y1="0" x2="75" y2="300"/>
+		<line class="st2" x1="37.5" y1="0" x2="37.5" y2="300"/>
+		<line class="st2" x1="112.5" y1="0" x2="112.5" y2="300"/>
+		<line class="st2" x1="187.5" y1="0" x2="187.5" y2="300"/>
+		<line class="st2" x1="262.5" y1="0" x2="262.5" y2="300"/>
+	</g>
+</g>
+<g id="Capa_4">
+</g>
+<g id="Capa_5">
+</g>
+<g id="Capa_3">
+	<g>
+		<defs>
+			<circle id="SVGID_1_" cx="150" cy="150" r="150"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_1_"  style="overflow:visible;"/>
+		</clipPath>
+		<circle class="st3" cx="150" cy="150" r="150"/>
+		<polygon class="st4" points="300,225 286.88,225 151.5,90.87 61.75,271.3 37.5,300 150,75 156.27,81.27 		"/>
+		<path class="st5" d="M225,150v37.5h-44.38c6.2-3.93,10.32-10.86,10.32-18.75s-4.12-14.82-10.32-18.75H225z"/>
+		<rect x="150" y="194.96" class="st6" width="37.5" height="105.04"/>
+		<circle class="st6" cx="168.75" cy="168.75" r="18.75"/>
+		<path class="st5" d="M300,112.5V225l-75-75l-68.73-68.73L150,75l-37.5,75h44.38c-6.2,3.93-10.32,10.86-10.32,18.75
+			s4.12,14.82,10.32,18.75H93.75L37.5,300H0L150,0h37.5L300,112.5z"/>
+	</g>
+</g>
+</svg>
