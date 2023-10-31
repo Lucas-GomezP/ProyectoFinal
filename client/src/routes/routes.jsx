@@ -3,6 +3,7 @@ import { Dashboard } from '../pages/Dashboard'
 import { Products } from '../pages/Products'
 import { Clients } from '../pages/Clients'
 import { Bills } from '../pages/Bills'
+import { Profile } from '../pages/Profile'
 
 export const routes = createBrowserRouter([
   {
@@ -24,5 +25,9 @@ export const routes = createBrowserRouter([
   {
     path: '/bills',
     element: <Bills />
+  },
+  {
+    path: '/profile',
+    element: <Profile />
   }
 ])
