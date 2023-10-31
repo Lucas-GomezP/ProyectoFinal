@@ -30,9 +30,9 @@ export const Menu = ({ children }) => {
       <main className='flex'>
         <aside
           onClick={() => { setResponsiveSideMenu(!responsiveSideMenu) }}
-          className={`bg-slate-950 bg-opacity-50 fixed top-0 left-0 pt-10  z-40 ${responsiveSideMenu ? '-translate-x-full' : ' w-full'} lg:translate-x-0 lg:w-40 transition`}
+          className={`bg-slate-950 bg-opacity-50 fixed top-0 left-0 pt-14  z-40 ${responsiveSideMenu ? '-translate-x-full' : ' w-full'} lg:translate-x-0 lg:w-40 transition`}
         >
-          <nav className='w-40 bg-gray-100 h-screen p-4'>
+          <nav className='w-52 bg-gray-100 h-screen p-4'>
             <ul className='flex gap-2 flex-col'>
               {navigationBar.map(item => {
                 return (
@@ -51,7 +51,7 @@ export const Menu = ({ children }) => {
             </ul>
           </nav>
         </aside>
-        <section className='transition-all p-4 w-full lg:ml-40 pt-12 lg:pt-4'>
+        <section className='transition-all px-4 w-full lg:ml-52 pt-16 lg:pt-4'>
           {children}
         </section>
       </main>

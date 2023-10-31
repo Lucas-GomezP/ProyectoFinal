@@ -12,7 +12,7 @@ export const Clients = () => {
   return (
     <>
       <Menu>
-        <h2 className='font-bold text-xl'>Productos</h2>
+        <h2 className='font-bold text-xl'>Clientes</h2>
         {isPending
           ? <Loader />
           : <table className='w-full table-auto'>
@@ -27,8 +27,8 @@ export const Clients = () => {
             <tbody className='w-full'>
               {showingData?.map((client) => {
                 return (
-                  <tr key={client.id} className='h-14 border-b border-slate-200 hover:bg-slate-200 hover:cursor-pointer'>
-                    <td className='h-14 py-1 pl-2 truncate'>{client.name}</td>
+                  <tr key={client.id} className='h-14 border-b text-sm md:text-base border-slate-200 hover:bg-slate-200 hover:cursor-pointer'>
+                    <td className='h-14 py-1 pl-2 md:truncate'>{client.name}</td>
                     <td className='h-14 py-1 text-center'>{client.cuil}</td>
                     <td className='h-14 py-1 text-ellipsis overflow-hidden hidden md:inline-block'>{client.phone}</td>
                     <td className='h-14 py-1 pr-2 text-center'>${client.email}</td>
