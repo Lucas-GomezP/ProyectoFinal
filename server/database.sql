@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS personas(
     domicilio VARCHAR(255),
     telefono INT(12),
     email VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id_persona)
 ); 
 
 CREATE TABLE IF NOT EXISTS usuarios(
@@ -23,20 +23,21 @@ CREATE TABLE IF NOT EXISTS usuarios(
 
 CREATE TABLE IF NOT EXISTS clientes(
     id_cliente INT(10) NOT NULL AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL
-    PRIMARY KEY (id),
+    nombre VARCHAR(255) NOT NULL,
     id_usuario INT(10),
+    PRIMARY KEY (id_cliente),
     FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario) 
 );
 
 CREATE TABLE IF NOT EXISTS oferta(
     id_oferta INT(10) NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(255) NOT NULL,
-    tipo CHAR(1) /*P si es producto, S si es servicio*/
+    tipo CHAR(1), /*P si es producto, S si es servicio*/
     descripcion VARCHAR(255),
     precio decimal(2),
     stock INT(10),
-    disponibilidad BOOLEAN
+    disponibilidad BOOLEAN,
+    PRIMARY KEY (id_oferta)
 );
 
 CREATE TABLE IF NOT EXISTS facturas(
@@ -48,7 +49,8 @@ CREATE TABLE IF NOT EXISTS facturas(
     fecha DATE,
     importe_total DECIMAL(10,2),
     descripcion VARCHAR(255),
-    estado INT(4) /*CODIGOS DE ESTADOS POSIBLES: pago, impago...*/
+    estado INT(4), /*CODIGOS DE ESTADOS POSIBLES: pago, impago...*/
+    PRIMARY KEY (id_factura)
 );
 
 CREATE TABLE IF NOT EXISTS detalle_facturas(    
@@ -57,5 +59,20 @@ CREATE TABLE IF NOT EXISTS detalle_facturas(
     FOREIGN KEY (id_factura) REFERENCES facturas(id_factura),    
     id_oferta INT(10),
     importe DECIMAL(10,2),
-    detalle VARCHAR(255)
+    detalle VARCHAR(255),
+    PRIMARY KEY (id_detalle_factura)
 );
+-- --------------------------------------------------------------
+-- INSERT DE PRUEBA
+-- --------------------------------------------------------------
+INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('ALE', '1234');
+INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('GABY', '1234');
+INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('LUQUITAS', '1234');
+-- --------------------------------------------------------------
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 1', '1');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 2', '1');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 3', '2');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 4', '3');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 5', '2');
+-- --------------------------------------------------------------
+
