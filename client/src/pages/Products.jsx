@@ -37,9 +37,16 @@ export const Products = () => {
     setShowSearchBar(false)
   }
 
+  const handleShowSearchBar = () => {
+    setSearchOptions([])
+    setShowSearchBar(!showSearchBar)
+  }
+
   useEffect(() => {
     setFilterData(data)
   }, [data])
+
+  const order = ['Alfabetico ↑', 'Alfabetico ↓', 'Precio ↑', 'Precio ↓', 'Stock ↑', 'Stock ↓']
 
   const handleOrder = (order) => {
     if (order === 'Carga -') {
@@ -112,7 +119,7 @@ export const Products = () => {
     <>
       <Menu>
         <h2 className='font-bold text-xl'>Productos</h2>
-        <div className='bg-orange-200 p-2 flex flex-wrap w-full items-center gap-2 justify-between'>
+        <div className='p-2 flex flex-wrap w-full items-center gap-2 justify-between'>
           <div className='bg-slate-100 p-2 flex gap-2 rounded-md'>
             <button
               onClick={() => { filterProductService({ type: 'all', order: actualOrder }) }}
@@ -148,40 +155,25 @@ export const Products = () => {
               </ul>}
             </div>
             <IconSearch
-              onClick={() => { setShowSearchBar(!showSearchBar) }}
+              onClick={handleShowSearchBar}
               className='p-1 h-full w-fit hover:text-purple-500 cursor-pointer '
             />
             <div className='h-11 p-1 w-fit relative'>
               <IconFilter
                 onClick={() => setShowOrder(!showOrder)}
-                className='p-1 h-full w-fit hover:text-purple-500 cursor-pointer'
+                className={`p-1 h-full w-fit hover:text-purple-500 cursor-pointer ${actualOrder !== 'Carga -' ? ' text-purple-500 ' : ' '}`}
               />
-              <div className={`${showOrder ? ' absolute ' : ' hidden '} right-0`}>
+              <div className={`${showOrder ? ' absolute ' : ' hidden '} right-0 z-10`}>
                 <ul className='bg-white border border-slate-300 rounded-md p-1 w-max'>
-                  <li
-                    onClick={() => { filterProductService({ type: actualFilter, order: 'Alfabetico ↑' }) }}
-                    className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >Alfabetico ↑</li>
-                  <li
-                    onClick={() => { filterProductService({ type: actualFilter, order: 'Alfabetico ↓' }) }}
-                    className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >Alfabetico ↓</li>
-                  <li
-                    onClick={() => { filterProductService({ type: actualFilter, order: 'Precio ↑' }) }}
-                    className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >Precio ↑</li>
-                  <li
-                    onClick={() => { filterProductService({ type: actualFilter, order: 'Precio ↓' }) }}
-                    className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >Precio ↓</li>
-                  <li
-                    onClick={() => { filterProductService({ type: actualFilter, order: 'Stock ↑' }) }}
-                    className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >Stock ↑</li>
-                  <li
-                    onClick={() => { filterProductService({ type: actualFilter, order: 'Stock ↓' }) }}
-                    className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >Stock ↓</li>
+                  {order.map((o, i) => {
+                    return (
+                      <li
+                        key={i}
+                        onClick={() => { filterProductService({ type: actualFilter, order: o }) }}
+                        className={`hover:bg-slate-200 ${actualOrder === o ? ' border border-purple-500 text-purple-500 ' : ' '} cursor-pointer p-1 rounded-md`}
+                      >{o}</li>
+                    )
+                  })}
                 </ul>
               </div>
             </div>
@@ -191,7 +183,7 @@ export const Products = () => {
               onKeyUp={handleSearchOptions}
               placeholder='Ingrese el nombre del producto...'
               type='text'
-              className={`p-1 w-full focus:outline-purple-500  rounded-md sm:hidden ${showSearchBar ? ' inline-flex ' : ' hidden '}`}
+              className={`p-1 w-full focus:outline-purple-500  rounded-md sm:hidden ${showSearchBar ? ' inline-flex ' : ' hidden '} border-2 border-slate-200`}
             />
             {searchOptions.length > 0 && <ul className='bg-white border border-slate-300 rounded-md absolute w-full p-1 sm:hidden overflow-y-auto max-h-96'>
               {searchOptions?.map(option => {
