@@ -37,8 +37,15 @@ CREATE TABLE IF NOT EXISTS oferta(
     precio decimal(2),
     stock INT(10),
     disponibilidad BOOLEAN,
+    id_usuario INT(10),
+    estado CHAR(1),-- 'A' Activo para la venta, 'I' Inactivo para la venta, cuando borremos un producto estara inactivo. Cuando lo demos de alta estara Activo.
+    FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario),
     PRIMARY KEY (id_oferta)
 );
+/*
+ALTER TABLE `db_api_facturacion`.`oferta` 
+ADD COLUMN `estado` VARCHAR(1) NOT NULL DEFAULT '1' AFTER `id_usuario`;
+*/
 
 CREATE TABLE IF NOT EXISTS facturas(
     id_factura INT(10) NOT NULL AUTO_INCREMENT,

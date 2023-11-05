@@ -12,8 +12,5 @@ app.config['SECRET_KEY'] = 'app_123'
 
 import api.routes.client
 import api.routes.users
-#import api.routes.users 
-# from flask import Flask
+import api.routes.oferta
 
-# app = Flask(__name__)
-# app.config.from_object('api.config.Config')

@@ -42,7 +42,6 @@ def token_required(func):
         return func(*args, **kwargs)
     return decorated
 
-
 def client_resource(func):
     @wraps(func)
     def decorated(*args, **kwargs):
@@ -72,4 +71,19 @@ def user_resources(func):
         return func(*args, **kwargs)
     return decorated
 
-
+def oferta_resource(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        print("Argumentos en oferta_resource: ", kwargs)
+        id_oferta = kwargs['oferta_id']
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT id_usuario FROM oferta WHERE id_oferta = {0}'.format(id_oferta)) 
+        data = cur.fetchone()
+        if data:
+            """ print(data) """
+            id_prop = data[0]
+            user_id = request.headers['user-id']            
+            if int(id_prop) != int(user_id):
+                return jsonify({"message": "No tiene permisos para acceder a este recurso"}), 401
+        return func(*args, **kwargs)
+    return decorated
