@@ -57,3 +57,9 @@ export function IconFilter (props) {
     <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24' {...props}><path fill='currentColor' d='M11 20q-.425 0-.713-.288T10 19v-6L4.2 5.6q-.375-.5-.113-1.05T5 4h14q.65 0 .913.55T19.8 5.6L14 13v6q0 .425-.288.713T13 20h-2Z' /></svg>
   )
 }
+
+export function IconEdit (props) {
+  return (
+    <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24' {...props}><path fill='currentColor' d='M6 22q-.825 0-1.413-.588T4 20V4q0-.825.588-1.413T6 2h8l6 6v3q-.575.125-1.075.4t-.925.7l-6 5.975V22H6Zm8 0v-3.075l5.525-5.5q.225-.225.5-.325t.55-.1q.3 0 .575.113t.5.337l.925.925q.2.225.313.5t.112.55q0 .275-.1.563t-.325.512l-5.5 5.5H14Zm6.575-5.6l.925-.975l-.925-.925l-.95.95l.95.95ZM13 9h5l-5-5l5 5l-5-5v5Z' /></svg>
+  )
+}

@@ -120,18 +120,18 @@ export const Products = () => {
       <Menu>
         <h2 className='font-bold text-xl'>Productos</h2>
         <div className='p-2 flex flex-wrap w-full items-center gap-2 justify-between'>
-          <div className='bg-slate-100 p-2 flex gap-2 rounded-md'>
+          <div className='bg-slate-100 p-1 py-2 flex gap-2 rounded-md'>
             <button
               onClick={() => { filterProductService({ type: 'all', order: actualOrder }) }}
-              className={`p-1 rounded-md ring-2 hover:bg-white hover:text-black ${actualFilter === 'all' ? ' bg-white text-purple-500 ring-purple-500 font-bold ' : ' text-white bg-slate-300 ring-slate-300 '}`}
+              className={`p-1 rounded-md ring-1 hover:bg-white hover:text-black ${actualFilter === 'all' ? ' bg-white text-purple-500 ring-purple-500 font-bold ' : ' text-white bg-slate-300 ring-slate-300 '}`}
             >Todos</button>
             <button
               onClick={() => { filterProductService({ type: 'product', order: actualOrder }) }}
-              className={`p-1 rounded-md ring-2 hover:bg-white hover:text-black ${actualFilter === 'product' ? ' bg-white text-purple-500 ring-purple-500 font-bold ' : ' text-white bg-slate-300 ring-slate-300 '}`}
+              className={`p-1 rounded-md ring-1 hover:bg-white hover:text-black ${actualFilter === 'product' ? ' bg-white text-purple-500 ring-purple-500 font-bold ' : ' text-white bg-slate-300 ring-slate-300 '}`}
             >Productos</button>
             <button
               onClick={() => { filterProductService({ type: 'service', order: actualOrder }) }}
-              className={`p-1 rounded-md ring-2 hover:bg-white hover:text-black ${actualFilter === 'service' ? ' bg-white text-purple-500 ring-purple-500 font-bold ' : ' text-white bg-slate-300 ring-slate-300 '}`}
+              className={`p-1 rounded-md ring-1 hover:bg-white hover:text-black ${actualFilter === 'service' ? ' bg-white text-purple-500 ring-purple-500 font-bold ' : ' text-white bg-slate-300 ring-slate-300 '}`}
             >Servicios</button>
           </div>
           <div className='bg-slate-100 h-12 flex items-center justify-center gap-2 p-2 rounded-md'>
@@ -226,7 +226,7 @@ export const Products = () => {
             </tbody>
           </table>}
         <ModalUI visible={detailProduct} setVisible={handleDetailProduct}>
-          <h2>{productInfo?.name}</h2>
+          <h2 className='text-xl font-bold my-2'>{productInfo?.name}</h2>
           <p>{productInfo?.description}</p>
           <p>{productInfo?.type ? 'producto' : 'servicio'}</p>
           <p>{productInfo?.date}</p>
