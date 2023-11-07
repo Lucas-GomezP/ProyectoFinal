@@ -4,11 +4,12 @@ import { Products } from '../pages/Products'
 import { Clients } from '../pages/Clients'
 import { Bills } from '../pages/Bills'
 import { Profile } from '../pages/Profile'
+import { Landing } from '../pages/Landing'
 
 export const routes = createBrowserRouter([
   {
     path: '/',
-    element: <h1>Home</h1>
+    element: <Landing />
   },
   {
     path: '/dashboard',
