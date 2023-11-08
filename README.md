@@ -57,6 +57,7 @@ pip install -r requirements.txt
 * Framework: React (con Vite como empaquetador)
 * Tailwind CSS 3
 * React Router DOM
+* React Hook Form
 
 1. Para instalar dependencias (dentro de la ruta ./client):
 ```bash
@@ -162,3 +163,25 @@ client/
 |-- tailwind.config.js
 |-- vite.config.js
 ```
+
+# Pasos a seguir para usarlo de forma local
+1. inicializar el XAMMP
+  1. Si no se tiene creado el usuario se debe realizar con la misma informacion puesta en el archivoo db.py
+  2. A continuacion crear la base de datos y sus respectivas tablas con la informacion del archivo database.sql
+2. Inicializar el servidor:
+  1. Desde la carpeta ./server utilizar:
+  ```
+  .venv\Scripts\activate
+
+  py main.py
+  ```
+3. Inicializar el servidor:
+  1. Si no se tienen instaladas las dependencias, desde la carpeta ./client:
+  ```
+  npm install
+  ```
+  2. Una vez instaladas las dependencias:
+  ```
+  npm run dev
+  ```
+4. Una vez funcionando la base de datos con la informacion dada, desde la pagina base del front (http://localhost:5173) ingresar con uno de los usuarios ya registrados

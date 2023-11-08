@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { HomeProv } from '../pages/HomoProv'
+import { HomeProv } from '../pages/HomeProv'
 import { Dashboard } from '../pages/Dashboard'
 import { Products } from '../pages/Products'
 import { Clients } from '../pages/Clients'

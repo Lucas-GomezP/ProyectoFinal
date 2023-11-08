@@ -30,7 +30,7 @@ def login():
                         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=100)}, app.config['SECRET_KEY'])
     print("token",token)
     print("row",row[0])
-
+    print('entro')
     return jsonify({"token": token, "username": auth.username , "id": row[0]})
 
 
