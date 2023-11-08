@@ -166,21 +166,21 @@ client/
 
 # Pasos a seguir para usarlo de forma local
 1. inicializar el XAMMP
-  1. Si no se tiene creado el usuario se debe realizar con la misma informacion puesta en el archivoo db.py
-  2. A continuacion crear la base de datos y sus respectivas tablas con la informacion del archivo database.sql
+  * Si no se tiene creado el usuario se debe realizar con la misma informacion puesta en el archivoo db.py
+  * A continuacion crear la base de datos y sus respectivas tablas con la informacion del archivo database.sql
 2. Inicializar el servidor:
-  1. Desde la carpeta ./server utilizar:
+  * Desde la carpeta ./server utilizar:
   ```
   .venv\Scripts\activate
 
   py main.py
   ```
 3. Inicializar el servidor:
-  1. Si no se tienen instaladas las dependencias, desde la carpeta ./client:
+  * Si no se tienen instaladas las dependencias, desde la carpeta ./client:
   ```
   npm install
   ```
-  2. Una vez instaladas las dependencias:
+  * Una vez instaladas las dependencias:
   ```
   npm run dev
   ```
