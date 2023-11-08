@@ -8,7 +8,7 @@ import { UserContext } from '../context/user'
 
 const navigationBar = [
   { name: 'Dashboard', route: '/dashboard', icon: <IconDashboard />, current: true },
-  { name: 'Productos', route: '/products', icon: <IconProducts />, current: false },
+  { name: 'Oferta', route: '/offer', icon: <IconProducts />, current: false },
   { name: 'Clientes', route: '/clients', icon: <IconClient />, current: false },
   { name: 'Facturas', route: '/bills', icon: <IconBills />, current: false }
 ]

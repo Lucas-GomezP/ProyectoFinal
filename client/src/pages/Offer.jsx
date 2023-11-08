@@ -7,7 +7,7 @@ import { useFetch } from '../hooks/useFetch'
 import { useEffect, useState } from 'react'
 import { IconSearch, IconFilter } from '../components/Icons'
 
-export const Products = () => {
+export const Offer = () => {
   const { data, isPending } = useFetch({ endpoint: 'products' })
   // Estado del filtro actual
   const [filterData, setFilterData] = useState(data)

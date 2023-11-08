@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { HomeProv } from '../pages/HomeProv'
 import { Dashboard } from '../pages/Dashboard'
-import { Products } from '../pages/Products'
+import { Offer } from '../pages/Offer'
 import { Clients } from '../pages/Clients'
 import { Bills } from '../pages/Bills'
 import { Profile } from '../pages/Profile'
@@ -16,8 +16,8 @@ export const routes = createBrowserRouter([
     element: <Dashboard />
   },
   {
-    path: '/products',
-    element: <Products />
+    path: '/offer',
+    element: <Offer />
   },
   {
     path: '/clients',
