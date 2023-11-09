@@ -1,12 +1,9 @@
 import { Menu } from '../components/Menu'
-import { UserContext } from '../context/user'
-import { useContext } from 'react'
 
 export const Profile = () => {
-  const { setUser } = useContext(UserContext)
-
   const closeSesion = () => {
-    setUser(null)
+    localStorage.clear()
+    window.location.reload()
   }
 
   return (

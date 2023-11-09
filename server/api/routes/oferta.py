@@ -11,7 +11,7 @@ from api.db.db import mysql
 @user_resources
 def get_all_oferta_by_user_id(user_id):
     cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM oferta WHERE id_usuario = {0}'.format(user_id))
+    cur.execute('SELECT * FROM oferta WHERE id_usuario = {0} AND estado = "A"'.format(user_id))
     data = cur.fetchall()
     ofertaList = []
     for row in data:

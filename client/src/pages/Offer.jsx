@@ -5,7 +5,7 @@ import { TablePagesFooter } from '../components/TablePagesFooter'
 import { ModalUI } from '../components/ModalUI'
 import { useFetch } from '../hooks/useFetch'
 import { useEffect, useState } from 'react'
-import { IconSearch, IconFilter, IconAdd } from '../components/Icons'
+import { IconSearch, IconFilter, IconAdd, IconDelete, IconEdit } from '../components/Icons'
 import { useForm } from 'react-hook-form'
 import { API_BASE_URL } from '../routes/apiUrl'
 
@@ -263,18 +263,98 @@ export const Offer = () => {
             </tbody>
           </table>}
 
-        <ModalUI visible={detailProduct} setVisible={handleDetailProduct}>
-          <h2 className='text-xl font-bold my-2'>{productInfo?.nombre}</h2>
-          <p>Descripcion: {productInfo?.descripcion}</p>
-          <p>Tipo: {productInfo?.tipo === 'P' ? 'producto' : 'servicio'}</p>
-          <p>Precio: ${productInfo?.precio}</p>
-          <p>Stock: {productInfo?.stock}</p>
-        </ModalUI>
+        <DetailProduct detailProduct={detailProduct} handleDetailProduct={handleDetailProduct} productInfo={productInfo} />
 
         <InsertOffer insertOffer={insertOffer} handleInsertOffer={handleInsertOffer} />
 
         <TablePagesFooter isPending={isPending} data={filterData} updateShowingData={setShowingData} />
       </Menu>
+    </>
+  )
+}
+
+const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
+  const [confirmDelete, setConfirmDelete] = useState(false)
+
+  const editProduct = () => {
+    console.log('edit')
+  }
+
+  const handleConfirmDelete = () => {
+    handleDetailProduct()
+    setConfirmDelete(!confirmDelete)
+  }
+
+  const deleteProduct = () => {
+    const endpointDeleteOffer = `user/${localStorage.id}/oferta/${productInfo.id_oferta}`
+
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.token,
+        'user-id': localStorage.id
+      }
+    }
+    fetch(API_BASE_URL + endpointDeleteOffer, requestOptions)
+      .then(res => {
+        if (!res.ok) throw new Error('Error HTTP: ' + res.status)
+        return res.json
+      })
+      .then(res => {
+        window.location.reload()
+      })
+      .catch(error => console.log(error))
+  }
+
+  return (
+    <>
+      <ModalUI visible={detailProduct} setVisible={handleDetailProduct}>
+        <h2 className='text-2xl text-center font-bold my-2'>{productInfo?.nombre}</h2>
+        <div className='flex flex-col justify-between h-5/6'>
+          <div>
+            <p className='font-bold'>Descripcion:</p>
+            <p>{productInfo?.descripcion}</p>
+            <p><strong>Precio:</strong> ${productInfo?.precio}</p>
+            {productInfo?.tipo === 'P'
+              ? <div>
+                <p><strong>Tipo:</strong> Producto</p>
+                <p><strong>Stock actual:</strong> {productInfo?.stock}</p>
+              </div>
+              : <div>
+                <p><strong>Tipo:</strong> Servicio</p>
+                {productInfo?.disponibilidad === 1
+                  ? <p><strong>Cuenta con disponibilidad</strong></p>
+                  : <p><strong>NO cuenta con disponibilidad</strong></p>}
+              </div>}
+          </div>
+          <div className='flex w-full justify-evenly'>
+            <IconDelete
+              onClick={handleConfirmDelete}
+              className='h-16 w-16 text-red-500 border-2 rounded-md border-red-500 py-1 bg-red-100 hover:text-red-100 hover:border-red-100 hover:bg-red-500 cursor-pointer'
+            />
+            <IconEdit
+              onClick={editProduct}
+              className='h-16 w-16 text-purple-500 border-2 rounded-md border-purple-500 py-1 bg-blue-100 hover:text-purple-100 hover:purple-blue-100 hover:bg-purple-500 cursor-pointer'
+            />
+          </div>
+        </div>
+      </ModalUI>
+      <ModalUI visible={confirmDelete} setVisible={handleConfirmDelete}>
+        <div className='h-5/6 flex flex-col justify-evenly'>
+          <h2 className='font-bold text-2xl text-center'>Seguro que desea borrar <span className='text-purple-500'>{productInfo.nombre}</span>?</h2>
+          <div className='flex justify-evenly'>
+            <button
+              className='text-2xl w-1/3 text-red-500 border-2 border-red-500 rounded-md bg-red-100 cursor-pointer hover:text-red-100 hover:border-red-100 hover:bg-red-500'
+              onClick={deleteProduct}
+            >Si</button>
+            <button
+              className='text-2xl w-1/3 text-purple-500 border-2 border-purple-500 rounded-md bg-purple-100 cursor-pointer hover:text-purple-100 hover:border-purple-100 hover:bg-purple-500'
+              onClick={handleConfirmDelete}
+            >No</button>
+          </div>
+        </div>
+      </ModalUI>
     </>
   )
 }
