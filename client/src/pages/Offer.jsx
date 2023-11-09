@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-closing-tag-location */
 import { Menu } from '../components/Menu'
 import { Loader } from '../components/Loader'
@@ -275,10 +276,52 @@ export const Offer = () => {
 
 const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [realiceEdit, setRealiceEdit] = useState(false)
+  const [productOrService, setProductOrService] = useState('P')
 
-  const editProduct = () => {
-    console.log('edit')
+  const handleProductOrService = (event) => {
+    setProductOrService(event.target.value)
   }
+
+  const handleRealiceEdit = () => {
+    handleDetailProduct()
+    setRealiceEdit(!realiceEdit)
+  }
+
+  const { register, handleSubmit, setValue } = useForm()
+  useEffect(() => {
+    setValue('nombre', productInfo.nombre)
+    setValue('tipo', productInfo.tipo)
+    setValue('stock', productInfo.stock)
+    setValue('disponibilidad', productInfo.disponibilidad)
+    setValue('precio', productInfo.precio)
+    setValue('descripcion', productInfo.descripcion)
+    setProductOrService(productInfo.tipo)
+  }, [productInfo])
+
+  const editProduct = handleSubmit((data) => {
+    const endpointDeleteOffer = `user/${localStorage.id}/oferta/${productInfo.id_oferta}`
+
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.token,
+        'user-id': localStorage.id
+      },
+      body: JSON.stringify(data)
+    }
+    fetch(API_BASE_URL + endpointDeleteOffer, requestOptions)
+      .then(res => {
+        if (!res.ok) throw new Error('Error HTTP: ' + res.status)
+        return res.json
+      })
+      .then(res => {
+        window.location.reload()
+        console.log(data)
+      })
+      .catch(error => console.log(error))
+  })
 
   const handleConfirmDelete = () => {
     handleDetailProduct()
@@ -334,7 +377,7 @@ const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
               className='h-16 w-16 text-red-500 border-2 rounded-md border-red-500 py-1 bg-red-100 hover:text-red-100 hover:border-red-100 hover:bg-red-500 cursor-pointer'
             />
             <IconEdit
-              onClick={editProduct}
+              onClick={handleRealiceEdit}
               className='h-16 w-16 text-purple-500 border-2 rounded-md border-purple-500 py-1 bg-blue-100 hover:text-purple-100 hover:purple-blue-100 hover:bg-purple-500 cursor-pointer'
             />
           </div>
@@ -355,15 +398,114 @@ const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
           </div>
         </div>
       </ModalUI>
+
+      <ModalUI visible={realiceEdit} setVisible={handleRealiceEdit}>
+        <h2 className='text-2xl font-bold my-2 text-center'>Editando <span className='text-purple-500'>{productInfo.nombre}</span></h2>
+        <form
+          onSubmit={editProduct}
+          className='flex flex-col gap-4'
+        >
+          <label htmlFor='nombre' className='font-bold'>Nombre producto/servicio:</label>
+          <input
+            {...register('nombre', {
+              required: true
+
+            })}
+            type='text'
+            id='nombre'
+            className='p-1 rounded-md focus:outline-purple-500'
+          />
+          <fieldset className='flex justify-between'>
+            <label htmlFor='tipo' className='font-bold'>Tipo:
+              <select
+                onChangeCapture={handleProductOrService}
+                {...register('tipo',
+                  { required: true })}
+                id='tipo'
+                className='p-1 rounded-md font-normal focus:outline-purple-500'
+              >
+                <option
+                  value='P'
+                >Producto</option>
+                <option
+                  value='S'
+                >Servicio</option>
+              </select>
+            </label>
+            <label htmlFor='stock' className={`font-bold ${productOrService === 'P' ? '' : ' hidden '}`}>Stock actual:
+              <input
+                {...register('stock', {
+                  required: true
+                })}
+                min={0}
+                type='number'
+                id='stock'
+                className='p-1 rounded-md font-normal focus:outline-purple-500 w-24'
+              />
+            </label>
+            <label htmlFor='disponibilidad' className={`font-bold ${productOrService === 'S' ? '' : ' hidden '}`}>Disponibilidad:
+              <select
+                {...register('disponibilidad',
+                  { required: true })}
+                id='disponibilidad'
+                className='p-1 rounded-md font-normal focus:outline-purple-500'
+              >
+                <option value={1}>Disponible</option>
+                <option value={0}>No disponible</option>
+              </select>
+            </label>
+          </fieldset>
+          <label htmlFor='descripcion' className='font-bold'>Descripcion:</label>
+          <textarea
+            {...register('descripcion', {
+              required: true
+            })}
+            id='descripcion'
+            cols='30'
+            rows='3'
+            className='resize-none p-1 rounded-md focus:outline-purple-500'
+          />
+          <label htmlFor='precio' className='font-bold'>Precio:</label>
+          <input
+            {...register('precio', {
+              required: true
+            })}
+            min={0}
+            type='number'
+            id='precio'
+            className='p-1 rounded-md focus:outline-purple-500'
+          />
+          <input
+            {...register('id_usuario')}
+            value={localStorage.id}
+            type='number'
+            className='hidden'
+          />
+          <input
+            {...register('estado')}
+            value='A'
+            type='text'
+            className='hidden'
+          />
+          <button type='submit' className=' p-2 rounded-md w-min self-center font-bold text-xl text-purple-500 bg-purple-100 border-2 border-purple-500 hover:bg-purple-500 hover:border-purple-100 hover:text-purple-100'>Guardar cambios</button>
+        </form>
+      </ModalUI>
     </>
   )
 }
 
 const InsertOffer = ({ insertOffer, handleInsertOffer }) => {
   const [productOrService, setProductOrService] = useState('P')
-  const { register, handleSubmit } = useForm()
+  const { register, handleSubmit, setValue } = useForm()
   const [succesInsert, setSuccesInsert] = useState(false)
   const [nameInsert, setNameInsert] = useState('')
+
+  useEffect(() => {
+    setValue('nombre', '')
+    setValue('stock', 0)
+    setValue('precio', 0)
+    setValue('descripcion', '')
+  }, [insertOffer])
 
   const handleProductOrService = (event) => {
     setProductOrService(event.target.value)
@@ -445,7 +587,6 @@ const InsertOffer = ({ insertOffer, handleInsertOffer }) => {
                 min={0}
                 type='number'
                 id='stock'
-                value={0}
                 className='p-1 rounded-md font-normal focus:outline-purple-500 w-24'
               />
             </label>
