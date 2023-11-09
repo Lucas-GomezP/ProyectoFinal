@@ -5,10 +5,29 @@ import { TablePagesFooter } from '../components/TablePagesFooter'
 import { ModalUI } from '../components/ModalUI'
 import { useFetch } from '../hooks/useFetch'
 import { useEffect, useState } from 'react'
-import { IconSearch, IconFilter } from '../components/Icons'
+import { IconSearch, IconFilter, IconAdd } from '../components/Icons'
+import { useForm } from 'react-hook-form'
+import { API_BASE_URL } from '../routes/apiUrl'
+
+const useObtainOffer = () => {
+  const endpointAllOffer = `user/${localStorage.id}/oferta`
+
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': localStorage.token,
+      'user-id': localStorage.id
+    }
+  }
+
+  const { data, isPending, error } = useFetch({ endpoint: endpointAllOffer, requestOptions })
+
+  return { data, isPending, error }
+}
 
 export const Offer = () => {
-  const { data, isPending } = useFetch({ endpoint: 'products' })
+  const { data, isPending } = useObtainOffer()
   // Estado del filtro actual
   const [filterData, setFilterData] = useState(data)
   const [actualFilter, setActualFilter] = useState('all')
@@ -46,6 +65,10 @@ export const Offer = () => {
     setFilterData(data)
   }, [data])
 
+  useEffect(() => {
+    setSearchOptions([])
+  }, [actualFilter, actualOrder, showSearchBar])
+
   const order = ['Alfabetico ↑', 'Alfabetico ↓', 'Precio ↑', 'Precio ↓', 'Stock ↑', 'Stock ↓']
 
   const handleOrder = (order) => {
@@ -56,22 +79,22 @@ export const Offer = () => {
       return newData
     } else if (order === 'Precio ↑') {
       setActualOrder('Precio ↑')
-      const newData = [...data.sort((a, b) => b.price - a.price)]
+      const newData = [...data.sort((a, b) => b.precio - a.precio)]
       setShowOrder(false)
       return newData
     } else if (order === 'Precio ↓') {
       setActualOrder('Precio ↓')
-      const newData = [...data.sort((a, b) => a.price - b.price)]
+      const newData = [...data.sort((a, b) => a.precio - b.precio)]
       setShowOrder(false)
       return newData
     } else if (order === 'Alfabetico ↑') {
       setActualOrder('Alfabetico ↑')
-      const newData = [...data.sort((a, b) => a.name.localeCompare(b.name))]
+      const newData = [...data.sort((a, b) => a.nombre.localeCompare(b.nombre))]
       setShowOrder(false)
       return newData
     } else if (order === 'Alfabetico ↓') {
       setActualOrder('Alfabetico ↓')
-      const newData = [...data.sort((a, b) => b.name.localeCompare(a.name))]
+      const newData = [...data.sort((a, b) => b.nombre.localeCompare(a.nombre))]
       setShowOrder(false)
       return newData
     } else if (order === 'Stock ↑') {
@@ -94,12 +117,12 @@ export const Offer = () => {
       setFilterData(newData)
     } else if (type === 'product') {
       const newData = handleOrder(order)
-      const filterData = newData.filter(d => d.type)
+      const filterData = newData.filter(d => d.tipo === 'P')
       setActualFilter('product')
       setFilterData(filterData)
     } else if (type === 'service') {
       const newData = handleOrder(order)
-      const filterData = newData.filter(d => !d.type)
+      const filterData = newData.filter(d => d.tipo === 'S')
       setActualFilter('service')
       setFilterData(filterData)
     }
@@ -110,15 +133,28 @@ export const Offer = () => {
       setSearchOptions([])
     } else {
       const newRegex = new RegExp(`^${event.target.value}`, 'gi')
-      const newSearchOptions = filterData.filter(d => d.name.match(newRegex))
+      const newSearchOptions = filterData.filter(d => d.nombre.match(newRegex))
       setSearchOptions(newSearchOptions)
     }
+  }
+
+  const [insertOffer, setInsertOffer] = useState(false)
+
+  const handleInsertOffer = () => {
+    setInsertOffer(!insertOffer)
   }
 
   return (
     <>
       <Menu>
-        <h2 className='font-bold text-xl'>Productos</h2>
+        <header className='flex justify-between items-center'>
+          <h2 className='font-bold text-2xl'>Oferta</h2>
+          <IconAdd
+            onClick={handleInsertOffer}
+            className='h-10 w-10 mr-2 hover:text-purple-500 cursor-pointer hover:scale-105 transition'
+          />
+        </header>
+
         <div className='p-2 flex flex-wrap w-full items-center gap-2 justify-between'>
           <div className='bg-slate-100 p-1 py-2 flex gap-2 rounded-md'>
             <button
@@ -138,7 +174,7 @@ export const Offer = () => {
             <div className='w-60 relative hidden sm:block'>
               <input
                 onKeyUp={handleSearchOptions}
-                placeholder='Ingrese el nombre del producto...'
+                placeholder='Ingrese el nombre a buscar...'
                 type='text'
                 className='p-1 w-full focus:outline-purple-500 rounded-md'
               />
@@ -146,10 +182,10 @@ export const Offer = () => {
                 {searchOptions?.map(option => {
                   return (
                     <li
-                      key={option.id}
+                      key={option.id_oferta}
                       onClick={() => { showingProductInfo(option) }}
                       className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                    >{option.name}</li>
+                    >{option.nombre}</li>
                   )
                 })}
               </ul>}
@@ -181,7 +217,7 @@ export const Offer = () => {
           <div className='w-full relative'>
             <input
               onKeyUp={handleSearchOptions}
-              placeholder='Ingrese el nombre del producto...'
+              placeholder='Ingrese el nombre a buscar...'
               type='text'
               className={`p-1 w-full focus:outline-purple-500  rounded-md sm:hidden ${showSearchBar ? ' inline-flex ' : ' hidden '} border-2 border-slate-200`}
             />
@@ -189,15 +225,16 @@ export const Offer = () => {
               {searchOptions?.map(option => {
                 return (
                   <li
-                    key={option.id}
+                    key={option.id_oferta}
                     onClick={() => { showingProductInfo(option) }}
                     className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >{option.name}</li>
+                  >{option.nombre}</li>
                 )
               })}
             </ul>}
           </div>
         </div>
+
         {isPending
           ? <Loader />
           : <table className='w-full table-auto'>
@@ -214,25 +251,181 @@ export const Offer = () => {
                 return (
                   <tr
                     onClick={() => showingProductInfo(product)}
-                    key={product?.id} className='h-14 border-b text-sm md:text-base border-slate-200 hover:bg-slate-200 hover:cursor-pointer'
+                    key={product?.id_oferta} className='h-14 border-b text-sm md:text-base border-slate-200 hover:bg-slate-200 hover:cursor-pointer'
                   >
-                    <td className='h-14 py-1 pl-2 md:truncate'>{product?.name}</td>
+                    <td className='h-14 py-1 pl-2 md:truncate'>{product?.nombre}</td>
                     <td className='h-14 py-1 text-center'>{product?.stock}</td>
-                    <td className='h-14 py-1 text-ellipsis overflow-hidden hidden md:inline-block'>{product?.description}</td>
-                    <td className='h-14 py-1 pr-2 text-center'>${product?.price}</td>
+                    <td className='h-14 py-1 text-ellipsis overflow-hidden hidden md:inline-block'>{product?.disponibilidad}</td>
+                    <td className='h-14 py-1 pr-2 text-center'>${product?.precio}</td>
                   </tr>
                 )
               })}
             </tbody>
           </table>}
+
         <ModalUI visible={detailProduct} setVisible={handleDetailProduct}>
-          <h2 className='text-xl font-bold my-2'>{productInfo?.name}</h2>
-          <p>{productInfo?.description}</p>
-          <p>{productInfo?.type ? 'producto' : 'servicio'}</p>
-          <p>{productInfo?.date}</p>
+          <h2 className='text-xl font-bold my-2'>{productInfo?.nombre}</h2>
+          <p>Descripcion: {productInfo?.descripcion}</p>
+          <p>Tipo: {productInfo?.tipo === 'P' ? 'producto' : 'servicio'}</p>
+          <p>Precio: ${productInfo?.precio}</p>
+          <p>Stock: {productInfo?.stock}</p>
         </ModalUI>
+
+        <InsertOffer insertOffer={insertOffer} handleInsertOffer={handleInsertOffer} />
+
         <TablePagesFooter isPending={isPending} data={filterData} updateShowingData={setShowingData} />
       </Menu>
+    </>
+  )
+}
+
+const InsertOffer = ({ insertOffer, handleInsertOffer }) => {
+  const [productOrService, setProductOrService] = useState('P')
+  const { register, handleSubmit } = useForm()
+  const [succesInsert, setSuccesInsert] = useState(false)
+  const [nameInsert, setNameInsert] = useState('')
+
+  const handleProductOrService = (event) => {
+    setProductOrService(event.target.value)
+  }
+
+  const handleSuccesInsert = () => {
+    setSuccesInsert(!succesInsert)
+  }
+
+  const reloadOffer = () => {
+    window.location.reload()
+  }
+
+  const onSubmitInsert = handleSubmit((data) => {
+    const endpointInsertOffer = `user/${localStorage.id}/oferta`
+
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.token,
+        'user-id': localStorage.id
+      },
+      body: JSON.stringify(data)
+    }
+    fetch(API_BASE_URL + endpointInsertOffer, requestOptions)
+      .then(res => {
+        if (!res.ok) throw new Error('Error HTTP: ' + res.status)
+        return res.json
+      })
+      .then(res => {
+        console.log(res)
+        setNameInsert(data.nombre)
+        handleInsertOffer()
+        handleSuccesInsert()
+      })
+      .catch(error => console.log(error + error.message))
+  })
+
+  return (
+    <>
+      <ModalUI visible={insertOffer} setVisible={handleInsertOffer}>
+        <h2 className='text-xl font-bold my-2 text-center'>Insertar Oferta</h2>
+        <form
+          onSubmit={onSubmitInsert}
+          className='flex flex-col gap-4'
+        >
+          <label htmlFor='nombre' className='font-bold'>Nombre producto/servicio:</label>
+          <input
+            {...register('nombre', {
+              required: true
+            })}
+            type='text'
+            id='nombre'
+            className='p-1 rounded-md focus:outline-purple-500'
+          />
+          <fieldset className='flex justify-between'>
+            <label htmlFor='tipo' className='font-bold'>Tipo:
+              <select
+                onChangeCapture={handleProductOrService}
+                {...register('tipo',
+                  { required: true })}
+                id='tipo'
+                className='p-1 rounded-md font-normal focus:outline-purple-500'
+              >
+                <option
+                  value='P'
+                >Producto</option>
+                <option
+                  value='S'
+                >Servicio</option>
+              </select>
+            </label>
+            <label htmlFor='stock' className={`font-bold ${productOrService === 'P' ? '' : ' hidden '}`}>Stock actual:
+              <input
+                {...register('stock', {
+                  required: true
+                })}
+                min={0}
+                type='number'
+                id='stock'
+                value={0}
+                className='p-1 rounded-md font-normal focus:outline-purple-500 w-24'
+              />
+            </label>
+            <label htmlFor='disponibilidad' className={`font-bold ${productOrService === 'S' ? '' : ' hidden '}`}>Disponibilidad:
+              <select
+                {...register('disponibilidad',
+                  { required: true })}
+                id='disponibilidad'
+                className='p-1 rounded-md font-normal focus:outline-purple-500'
+              >
+                <option value={1}>Disponible</option>
+                <option value={0}>No disponible</option>
+              </select>
+            </label>
+          </fieldset>
+          <label htmlFor='descripcion' className='font-bold'>Descripcion:</label>
+          <textarea
+            {...register('descripcion', {
+              required: true
+            })}
+            id='descripcion'
+            cols='30'
+            rows='3'
+            className='resize-none p-1 rounded-md focus:outline-purple-500'
+          />
+          <label htmlFor='precio' className='font-bold'>Precio:</label>
+          <input
+            {...register('precio', {
+              required: true
+            })}
+            min={0}
+            type='number'
+            id='precio'
+            className='p-1 rounded-md focus:outline-purple-500'
+          />
+          <input
+            {...register('id_usuario')}
+            value={localStorage.id}
+            type='number'
+            className='hidden'
+          />
+          <input
+            {...register('estado')}
+            value='A'
+            type='text'
+            className='hidden'
+          />
+          <button type='submit' className=' p-2 rounded-md w-min self-center font-bold text-xl text-purple-500 bg-purple-100 border-2 border-purple-500 hover:bg-purple-500 hover:border-purple-100 hover:text-purple-100'>Cargar</button>
+        </form>
+      </ModalUI>
+      <ModalUI visible={succesInsert} setVisible={handleSuccesInsert}>
+        <div className='flex flex-col justify-evenly h-96 items-center'>
+          <h2 className='font-bold text-xl text-center'>Carga exitosa de:</h2>
+          <h3 className='font-bold text-3xl text-center text-purple-500'>{nameInsert}</h3>
+          <button
+            onClick={reloadOffer}
+            className=' p-2 rounded-md w-min self-center font-bold text-xl text-purple-500 bg-purple-100 border-2 border-purple-500 hover:bg-purple-500 hover:border-purple-100 hover:text-purple-100'
+          >Aceptar</button>
+        </div>
+      </ModalUI>
     </>
   )
 }

@@ -1,8 +1,7 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { Header } from './Header'
 import { IconDashboard, IconProducts, IconClient, IconBills, IconProfile, IconArrow } from '../components/Icons'
-import { UserContext } from '../context/user'
 
 // El menu utiliza el componente Header para mantener siempre la cabecera visible, pero el aside bar para ser responsivo usa un useState y toma el children para acomodarlo dependiendo de la vision misma de la pagina
 
@@ -18,8 +17,6 @@ const navigationProfile = { name: 'Perfil', route: '/profile', icon: <IconProfil
 export const Menu = ({ children }) => {
   const [responsiveSideMenu, setResponsiveSideMenu] = useState(true)
 
-  const { user } = useContext(UserContext)
-
   const handleNavigationBar = (item) => {
     navigationBar.forEach(i => {
       if (i.name === item.name) {
@@ -34,9 +31,10 @@ export const Menu = ({ children }) => {
       navigationProfile.current = false
     }
   }
+
   return (
     <>
-      {!user &&
+      {!localStorage.id &&
         <Navigate to='/' replace />}
       <Header setResponsiveSideMenu={setResponsiveSideMenu} responsiveSideMenu={responsiveSideMenu} />
       <main className='flex'>
@@ -70,7 +68,7 @@ export const Menu = ({ children }) => {
             <div className={` m-2 mb-6 border border-slate-200 rounded-xl p-2 flex items-center justify-evenly gap-2 cursor-pointer hover:bg-purple-500 hover:text-white ${navigationProfile.current ? ' bg-purple-500 text-white shadow-sm ' : ' bg-white'}`}>
               <IconProfile />
               <div>
-                <p className='text-sm'>{user?.username}</p>
+                <p className='text-sm'>{localStorage.username}</p>
                 <span className='text-xs'>mail@mail.com</span>
               </div>
               <IconArrow />

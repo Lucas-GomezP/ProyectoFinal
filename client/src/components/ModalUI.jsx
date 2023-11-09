@@ -20,7 +20,7 @@ export const ModalUI = ({ children, visible, setVisible }) => {
                 className='hover:bg-red-500 w-8 h-8 rounded cursor-pointer ring ring-red-500'
               />
             </div>
-            <div className='z-10'>
+            <div className='z-10 h-full'>
               {children}
             </div>
           </div>

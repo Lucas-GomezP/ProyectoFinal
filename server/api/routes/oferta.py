@@ -57,7 +57,7 @@ def insertar(user_id):
         info_campos = {campo: datos[campo] for campo in CAMPOS_REQUERIDOS}
         
         # verificamos si el user coincide con la informacion del dato recibido 
-        if info_campos['id_usuario'] != user_id:
+        if int(info_campos['id_usuario']) != int(user_id):
             return jsonify({"message": "User Incorrecto."}), 401
         
         if info_campos['tipo'] not in TIPO_OFERTA:

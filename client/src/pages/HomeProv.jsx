@@ -7,7 +7,7 @@ import { Navigate } from 'react-router-dom'
 export const HomeProv = () => {
   // LLamamos el hook y obtenemos las funcionalidades que necesitamos
   const { register, handleSubmit } = useForm()
-  const { user, setUser } = useContext(UserContext)
+  const { user, handleUser } = useContext(UserContext)
   const onSubmit = handleSubmit((data) => {
     const requestOptions = {
       method: 'POST',
@@ -20,7 +20,10 @@ export const HomeProv = () => {
     fetch(API_BASE_URL + ENDPOINTS.login, requestOptions)
       .then(res => res.json())
       .then(data => {
-        setUser(data)
+        localStorage.setItem('id', data.id)
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('username', data.username)
+        handleUser()
       })
   })
 
