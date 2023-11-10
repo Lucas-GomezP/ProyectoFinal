@@ -20,6 +20,7 @@ export const HomeProv = () => {
     fetch(API_BASE_URL + ENDPOINTS.login, requestOptions)
       .then(res => res.json())
       .then(data => {
+        localStorage.clear()
         localStorage.setItem('id', data.id)
         localStorage.setItem('token', data.token)
         localStorage.setItem('username', data.username)
