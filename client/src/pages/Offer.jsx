@@ -288,7 +288,7 @@ const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
     setRealiceEdit(!realiceEdit)
   }
 
-  const { register, handleSubmit, setValue } = useForm()
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm()
   useEffect(() => {
     setValue('nombre', productInfo.nombre)
     setValue('tipo', productInfo.tipo)
@@ -403,18 +403,22 @@ const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
         <h2 className='text-2xl font-bold my-2 text-center'>Editando <span className='text-purple-500'>{productInfo.nombre}</span></h2>
         <form
           onSubmit={editProduct}
-          className='flex flex-col gap-4'
+          className='flex flex-col gap-8'
         >
-          <label htmlFor='nombre' className='font-bold'>Nombre producto/servicio:</label>
-          <input
-            {...register('nombre', {
-              required: true
-
-            })}
-            type='text'
-            id='nombre'
-            className='p-1 rounded-md focus:outline-purple-500'
-          />
+          <label htmlFor='nombre' className='font-bold flex flex-col relative'>Nombre producto/servicio:
+            <input
+              {...register('nombre', {
+                required: { value: true, message: 'Ingrese un nombre' },
+                minLength: { value: 3, message: 'El nomrbre debe tener al menos 3 caracteres' },
+                maxLength: { value: 100, message: 'El nombre no puede superar los 100 caracteres' }
+              })}
+              type='text'
+              id='nombre'
+              className='p-1 rounded-md font-normal focus:outline-purple-500'
+            />
+            {errors.nombre && <span className='h-4 text-sm text-red-500 absolute top-14'>{errors.nombre.message}
+            </span>}
+          </label>
           <fieldset className='flex justify-between'>
             <label htmlFor='tipo' className='font-bold'>Tipo:
               <select
@@ -455,16 +459,20 @@ const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
               </select>
             </label>
           </fieldset>
-          <label htmlFor='descripcion' className='font-bold'>Descripcion:</label>
-          <textarea
-            {...register('descripcion', {
-              required: true
-            })}
-            id='descripcion'
-            cols='30'
-            rows='3'
-            className='resize-none p-1 rounded-md focus:outline-purple-500'
-          />
+          <label htmlFor='descripcion' className='font-bold flex flex-col relative'>Descripcion:
+            <textarea
+              {...register('descripcion', {
+                required: { value: true, message: 'Ingrese una descripcion' },
+                minLength: { value: 10, message: 'El nomrbre debe tener al menos 10 caracteres' },
+                maxLength: { value: 150, message: 'El nombre no puede superar los 150 caracteres' }
+              })}
+              id='descripcion'
+              cols='30'
+              rows='4'
+              className='resize-none font-normal p-1 rounded-md focus:outline-purple-500'
+            />
+            {errors.descripcion && <span className='h-4 text-sm text-red-500 absolute top-32'>{errors.descripcion.message}</span>}
+          </label>
           <label htmlFor='precio' className='font-bold'>Precio:</label>
           <input
             {...register('precio', {
@@ -496,7 +504,7 @@ const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
 
 const InsertOffer = ({ insertOffer, handleInsertOffer }) => {
   const [productOrService, setProductOrService] = useState('P')
-  const { register, handleSubmit, setValue } = useForm()
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm()
   const [succesInsert, setSuccesInsert] = useState(false)
   const [nameInsert, setNameInsert] = useState('')
 
@@ -551,17 +559,22 @@ const InsertOffer = ({ insertOffer, handleInsertOffer }) => {
         <h2 className='text-xl font-bold my-2 text-center'>Insertar Oferta</h2>
         <form
           onSubmit={onSubmitInsert}
-          className='flex flex-col gap-4'
+          className='flex flex-col gap-8'
         >
-          <label htmlFor='nombre' className='font-bold'>Nombre producto/servicio:</label>
-          <input
-            {...register('nombre', {
-              required: true
-            })}
-            type='text'
-            id='nombre'
-            className='p-1 rounded-md focus:outline-purple-500'
-          />
+          <label htmlFor='nombre' className='font-bold flex flex-col relative'>Nombre producto/servicio:
+            <input
+              {...register('nombre', {
+                required: { value: true, message: 'Ingrese un nombre' },
+                minLength: { value: 3, message: 'El nomrbre debe tener al menos 3 caracteres' },
+                maxLength: { value: 100, message: 'El nombre no puede superar los 100 caracteres' }
+              })}
+              type='text'
+              id='nombre'
+              className='p-1 rounded-md font-normal focus:outline-purple-500'
+            />
+            {errors.nombre && <span className='h-4 text-sm text-red-500 absolute top-14'>{errors.nombre.message}
+            </span>}
+          </label>
           <fieldset className='flex justify-between'>
             <label htmlFor='tipo' className='font-bold'>Tipo:
               <select
@@ -602,16 +615,20 @@ const InsertOffer = ({ insertOffer, handleInsertOffer }) => {
               </select>
             </label>
           </fieldset>
-          <label htmlFor='descripcion' className='font-bold'>Descripcion:</label>
-          <textarea
-            {...register('descripcion', {
-              required: true
-            })}
-            id='descripcion'
-            cols='30'
-            rows='3'
-            className='resize-none p-1 rounded-md focus:outline-purple-500'
-          />
+          <label htmlFor='descripcion' className='font-bold flex flex-col relative'>Descripcion:
+            <textarea
+              {...register('descripcion', {
+                required: { value: true, message: 'Ingrese una descripcion' },
+                minLength: { value: 10, message: 'El nomrbre debe tener al menos 10 caracteres' },
+                maxLength: { value: 150, message: 'El nombre no puede superar los 150 caracteres' }
+              })}
+              id='descripcion'
+              cols='30'
+              rows='4'
+              className='resize-none font-normal p-1 rounded-md focus:outline-purple-500'
+            />
+            {errors.descripcion && <span className='h-4 text-sm text-red-500 absolute top-32'>{errors.descripcion.message}</span>}
+          </label>
           <label htmlFor='precio' className='font-bold'>Precio:</label>
           <input
             {...register('precio', {
