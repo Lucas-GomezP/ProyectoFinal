@@ -10,3 +10,9 @@ app.config['MYSQL_DB'] = 'db_api_facturacion'
 
 mysql = MySQL(app)
 
+class DBError(Exception):
+    def __init__(self, message, query):
+        self.message = message
+        self.query = query
+        super().__init__(self.message)
+

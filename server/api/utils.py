@@ -87,3 +87,20 @@ def oferta_resource(func):
                 return jsonify({"message": "No tiene permisos para acceder a este recurso"}), 401
         return func(*args, **kwargs)
     return decorated
+
+def factura_resource(func):
+    @wraps(func)
+    def decorated(*args, **kwargs):
+        print("Argumentos en oferta_resource: ", kwargs)
+        id_factura = kwargs['factura_id']
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT id_usuario FROM facturas WHERE id_factura = {0}'.format(id_factura)) 
+        data = cur.fetchone()
+        if data:
+            """ print(data) """
+            id_prop = data[0]
+            user_id = request.headers['user-id']            
+            if int(id_prop) != int(user_id):
+                return jsonify({"message": "No tiene permisos para acceder a este recurso"}), 401
+        return func(*args, **kwargs)
+    return decorated

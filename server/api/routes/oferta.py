@@ -25,7 +25,7 @@ def get_all_oferta_by_user_id(user_id):
 @app.route('/user/<int:user_id>/oferta/<int:oferta_id>', methods = ['GET'])
 @token_required
 @user_resources
-@oferta_resource
+@oferta_resource # verificamos que la oferta solicitada puede ser accedida x el usuario
 def get_oferta_by_id(user_id,oferta_id):
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM oferta WHERE  id_usuario = {0} and  id_oferta = {1}'.format(user_id,oferta_id))
@@ -74,12 +74,13 @@ def insertar(user_id):
         cur.close()
 
         return jsonify({"message": "Inserción exitosa"}), 201
-    except mysql.connector.Error as e:
+    except mysql.connector.Error as e:                        
         return jsonify({"message": f"Error en la base de datos: {e}"}), 500
 
 @app.route('/user/<int:user_id>/oferta/<int:oferta_id>', methods=['DELETE'])
 @token_required
 @user_resources
+@oferta_resource
 def desactivar_oferta(user_id, oferta_id):
     try:
         # Comprobamos si la oferta pertenece al usuario
@@ -105,6 +106,7 @@ def desactivar_oferta(user_id, oferta_id):
 @app.route('/user/<int:user_id>/oferta/<int:oferta_id>', methods=['PUT'])
 @token_required
 @user_resources
+@oferta_resource
 def update_oferta(user_id, oferta_id):
     try:
         # campos que pueden ser actualizados

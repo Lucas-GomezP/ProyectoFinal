@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS facturas(
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
     fecha DATE,
-    importe_total DECIMAL(10,2),
+    /*importe_total DECIMAL(10,2),*/
     descripcion VARCHAR(255),
     estado INT(4), /*CODIGOS DE ESTADOS POSIBLES: pago, impago...*/
     PRIMARY KEY (id_factura)
@@ -65,10 +65,26 @@ CREATE TABLE IF NOT EXISTS detalle_facturas(
     id_factura INT(10),
     FOREIGN KEY (id_factura) REFERENCES facturas(id_factura),    
     id_oferta INT(10),
+    FOREIGN KEY (id_oferta) REFERENCES oferta(id_oferta),
+    /*detalle VARCHAR(255),*/
     importe DECIMAL(10,2),
-    detalle VARCHAR(255),
+    cantidad INT(10),    
     PRIMARY KEY (id_detalle_factura)
 );
+/*
+ALTER TABLE `db_api_facturacion`.`detalle_facturas` 
+DROP FOREIGN KEY `detalle_facturas_ibfk_1`;
+ALTER TABLE `db_api_facturacion`.`detalle_facturas` 
+ADD COLUMN `cantidad` INT(10) NOT NULL DEFAULT 0 AFTER `importe`,
+CHANGE COLUMN `detalle` `detalle` VARCHAR(255) NOT NULL AFTER `id_oferta`,
+CHANGE COLUMN `id_factura` `id_factura` INT(10) NOT NULL ,
+CHANGE COLUMN `id_oferta` `id_oferta` INT(10) NOT NULL ,
+CHANGE COLUMN `importe` `importe` DECIMAL(10,2) NOT NULL ;
+ALTER TABLE `db_api_facturacion`.`detalle_facturas` 
+ADD CONSTRAINT `detalle_facturas_ibfk_1`
+  FOREIGN KEY (`id_factura`)
+  REFERENCES `db_api_facturacion`.`facturas` (`id_factura`);
+*/
 -- --------------------------------------------------------------
 -- INSERT DE PRUEBA
 -- --------------------------------------------------------------
