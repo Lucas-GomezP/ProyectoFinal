@@ -44,7 +44,12 @@ CREATE TABLE IF NOT EXISTS oferta(
 );
 /*
 ALTER TABLE `db_api_facturacion`.`oferta` 
+ADD COLUMN `id_usuario` INT(10) NOT NULL AFTER `disponibilidad`;
 ADD COLUMN `estado` VARCHAR(1) NOT NULL DEFAULT '1' AFTER `id_usuario`;
+
+ALTER TABLE `oferta`
+ADD CONSTRAINT `oferta_ibfk_1`
+FOREIGN KEY (`id_usuario`) REFERENCES `usuarios`(`id_usuario`);
 */
 
 CREATE TABLE IF NOT EXISTS facturas(

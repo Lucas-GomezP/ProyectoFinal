@@ -5,7 +5,7 @@ from api.utils import token_required, oferta_resource, user_resources
 from api.db.db import mysql
 
 
-# retorna todos las ofertas del usuario solicitado
+# retorna todas las ofertas del usuario solicitado
 @app.route('/user/<int:user_id>/oferta', methods = ['GET'])
 @token_required
 @user_resources

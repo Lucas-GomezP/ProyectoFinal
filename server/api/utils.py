@@ -62,14 +62,26 @@ def client_resource(func):
     return decorated
 
 def user_resources(func):
+    """
+    Decorador para recursos de usuario que verifica si el usuario está autorizado.
+
+    Args:
+        func (invocada): la función a invocar.
+
+    Returns:
+        invocada: función invocada con la lógica de autorización.
+    """
     @wraps(func)
     def decorated(*args, **kwargs):
         print("Argumentos en user_resources: ", kwargs)
-        id_user_route = kwargs['user_id']
-        user_id = request.headers['user-id']
-        if int(id_user_route) != int(user_id):
+        id_user_route = kwargs['user_id']  # Obtiene el ID de usuario del recurso solicitado (proveniente del front-end)
+        # Obtiene el ID de usuario autenticado a través de las cabeceras de la solicitud        
+        user_id = request.headers['user-id'] 
+        
+        if int(id_user_route) != int(user_id): # Compara los ID de usuario para verificar la autorización
             return jsonify({"message": "No tiene permisos para acceder a este recurso"}), 401
-        return func(*args, **kwargs)
+        
+        return func(*args, **kwargs) # Ejecuta la función original si la autorización es exitosa
     return decorated
 
 def oferta_resource(func):
