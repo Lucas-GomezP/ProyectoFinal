@@ -8,6 +8,7 @@ from api.db.db import mysql
     
 
 def token_required(func):
+    #funcion que se invoca cada vez que se requiera un token
     @wraps(func)
     def decorated(*args, **kwargs):
         print(kwargs)

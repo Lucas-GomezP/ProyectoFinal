@@ -14,7 +14,7 @@ def login():
 
     """ Control: existen valores para la autenticacion? """
     if not auth or not auth.username or not auth.password:
-        return jsonify({"message": "No autorizado hello"}), 401       
+        return jsonify({"message": "No autorizado"}), 401       
             
     """ Control: existe y coincide el usuario en la BD? """
     cur = mysql.connection.cursor()
