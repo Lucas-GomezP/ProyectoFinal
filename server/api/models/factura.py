@@ -63,7 +63,16 @@ class Factura():
             "descripcion": self._descripcion,
             "estado": self._estado
         }
-    
+    @staticmethod
+    def update_total_fc(total,id):
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE facturas SET importe_total = %s WHERE id_factura = %s",(total,id))
+        mysql.connection.commit()        
+        if cur.rowcount > 0:
+            cur.close()
+            return True
+        cur.close()
+        return False
     def create_fc(user_id,data_fc):
         print("Creaando fc...")
         # Verificamos si 'data_fc' está vacío o no es un diccionario
@@ -109,8 +118,10 @@ class Factura():
                 # aca iria el texto que crea los registros de la tabla detalle factura
                 # digamos que dentro de los datos que recibo existe datos_detalle
                 # schema = {        "id_factura" : int,        "id_oferta":int,        "detalle": str,        "importe": float,       "cantidad": int    }               
-                result = ElementoDetalleFactura.insertar_detalle(id, data_detalle)
-                
+                result,total_fc = ElementoDetalleFactura.insertar_detalle(id, data_detalle)
+                Factura.update_total_fc(total_fc,id)
+                #falta actualizar el stock
+                cur.close()                
                 return Factura(info_campos).to_json(),result                
             raise DBError("Error al insertar datos", consulta)
         raise TypeError("Error tipos")
@@ -120,6 +131,7 @@ class Factura():
 class ElementoDetalleFactura:
     schema = {        
         "id_oferta":int,   
+        "importe":float, 
         "cantidad": int
     }
     @staticmethod
@@ -213,39 +225,43 @@ class ElementoDetalleFactura:
         campos_detalle = ["id_factura"] + list(ElementoDetalleFactura.schema.keys())
         # preparamos la query
         cur = mysql.connection.cursor()
+        
+        print("campos detalle:",campos_detalle)
+       
+        # Creamos una lista de tuplas con los valores a insertar
+        
+        valores_detalle = []
+        try:
+            for detalle in datos_detalle:                
+                query = """
+                            SELECT 
+                                precio
+                            FROM 
+                                oferta 
+                            WHERE                             
+                                id_oferta = %s                            
+                        """
+                cur.execute(query, (detalle["id_oferta"],))                
+                importe = cur.fetchone()                
+                detalle["importe"] = importe[0] if importe else 0
+                valores_detalle.append((
+                    id_factura,
+                    detalle["id_oferta"],
+                    detalle["importe"],
+                    detalle["cantidad"]
+                ))
+        except Exception as e:
+            print("Error:", e)
+
+        
+
+        # Insertar los datos del detalle
         consulta = 'INSERT INTO detalle_facturas ({}) VALUES ({})'.format(
             ', '.join(campos_detalle),
             ', '.join(['%s'] * len(campos_detalle))
         )
-        print("campos detalle:",campos_detalle)
-        print("consulta",consulta)
-        # Creamos una lista de tuplas con los valores a insertar
-        
-        valores_detalle = []
-        for detalle in datos_detalle:
-            print(detalle)
-            print("---------tttttttt")
-            query = """
-                        SELECT 
-                            importe
-                        FROM 
-                            oferta 
-                        WHERE                             
-                            AND id_oferta = %s                            
-                    """
-            cur.execute(query, (detalle["id_oferta"]))
-            importe = cur.fetchone()
-            print("---------tttttttt",importe)
-            detalle["importe"] = importe[0] # if importe else -1
-            valores_detalle.append((
-                id_factura,
-                detalle["id_oferta"],
-                detalle["importe"],
-                detalle["cantidad"]
-            ))
-            
-
-        # Insertar los datos del detalle
+        print("consulta:",consulta)
+        print("valores",valores_detalle) 
         cur.executemany(consulta, valores_detalle)
         mysql.connection.commit()
         
@@ -265,7 +281,7 @@ class ElementoDetalleFactura:
             return registros_creados,total_importe  # Retornamos los registros creados y el total de la factura
         else:
             cur.close()
-            return []  # No se insertaron registros, retornar lista vacía
+            return [], 0 # No se insertaron registros, retornar lista vacía
        
 
 
