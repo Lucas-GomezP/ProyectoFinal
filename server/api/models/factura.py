@@ -73,25 +73,21 @@ class Factura():
             return True
         cur.close()
         return False
+    
     def create_fc(user_id,data_fc):
         print("Creaando fc...")
         # Verificamos si 'data_fc' está vacío o no es un diccionario
         if not data_fc:# or not isinstance(data_fc, dict):
-            raise ValueError("El JSON recibido está vacío o no es un diccionario")
-        print("-----1")
+            raise ValueError("El JSON recibido está vacío o no es un diccionario")       
 
         # Verificamos si 'data_fc' contiene las claves 'encabezado' y 'detalle_fc'
-        if 'encabezado' not in data_fc or 'detalle_fc' not in data_fc:
-            print("-----1 error")
+        if 'encabezado' not in data_fc or 'detalle_fc' not in data_fc:            
             raise ValueError("El JSON no contiene las secciones 'encabezado' o 'detalle_fc'")
 
         # Obtenemos 'encabezado' y 'detalle_fc' del JSON recibido
         data_encabezado, data_detalle = data_fc["encabezado"], data_fc["detalle_fc"]
-        print("data encabezado", data_encabezado)
-        print("data detalle", data_detalle)
-        print("------------------------------/*/*/*/*")
         # verificamos los datos                
-        if Factura.check_data_schema(data_encabezado):# and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):            
+        if Factura.check_data_schema(data_encabezado):#and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):            
             print("check ok")
             CAMPOS_REQUERIDOS = list(Factura.schema.keys())   
             #print(CAMPOS_REQUERIDOS)         
@@ -99,31 +95,29 @@ class Factura():
             #print(info_campos)
             cur = mysql.connection.cursor()
             #mysql.connection.cursor()
-            consulta = 'INSERT INTO facturas ({}) VALUES ({})'.format(
+            encabezado = 'INSERT INTO facturas ({}) VALUES ({})'.format(
             ', '.join(info_campos.keys()), ', '.join(['%s'] * len(info_campos)))     
             #print("consulta",consulta)       
             valores = tuple(info_campos.values())           
             #print("valores",valores,type(valores))
-            cur.execute(consulta, (valores))     
+            cur.execute(encabezado, (valores))     
             #print("---------------------------------")       
             mysql.connection.commit()
             #print("rowcount", cur.rowcount)            
             if cur.rowcount > 0:                                        
-                cur.execute("SELECT LAST_INSERT_ID()")                
-                res = cur.fetchall()                
+                cur.execute("SELECT LAST_INSERT_ID()")   #devuelve el ultimo valor insertado en la tabla SQL             
+                res = cur.fetchall()  #todo ver de reemplazar por fetchone()              
                 id = res[0][0]                
                 info_campos['id_factura'] = id 
-                cur.close()
-                print("---------------------------------",id)
+                cur.close()               
                 # aca iria el texto que crea los registros de la tabla detalle factura
                 # digamos que dentro de los datos que recibo existe datos_detalle
                 # schema = {        "id_factura" : int,        "id_oferta":int,        "detalle": str,        "importe": float,       "cantidad": int    }               
                 result,total_fc = ElementoDetalleFactura.insertar_detalle(id, data_detalle)
                 Factura.update_total_fc(total_fc,id)
-                #falta actualizar el stock
-                cur.close()                
+                #falta actualizar el stock                            
                 return Factura(info_campos).to_json(),result                
-            raise DBError("Error al insertar datos", consulta)
+            raise DBError("Error al insertar datos", encabezado)
         raise TypeError("Error tipos")
         
 
