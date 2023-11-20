@@ -9,6 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 app.config['SECRET_KEY'] = 'app_123'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 import api.routes.client
 import api.routes.users

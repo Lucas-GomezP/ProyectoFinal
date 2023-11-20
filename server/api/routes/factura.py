@@ -66,7 +66,7 @@ def get_factura_by_id(user_id, factura_id):
     cur.close()
     return jsonify({"message": "ID not found"}), 404
 
-
+# crea factura. y en caso de exito retorna la factura creada. de lo contrario retorna el error.
 @app.route('/user/<int:user_id>/facturas', methods=['POST'])
 @token_required
 @user_resources

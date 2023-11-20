@@ -15,8 +15,7 @@ class Factura():
     def check_data_schema(data):
         # Verificamos si 'data' es nulo o no es un diccionario        
         if data is None or type(data) != dict:
-            return False        
-        print("-------*-----------*--------ok hasta aca")
+            return False                
         # Iteramos sobre las claves del esquema de datos de Factura
         for key in Factura.schema:            
             # Verificamos si cada clave está presente en 'data'
@@ -87,24 +86,26 @@ class Factura():
         # Obtenemos 'encabezado' y 'detalle_fc' del JSON recibido
         data_encabezado, data_detalle = data_fc["encabezado"], data_fc["detalle_fc"]
         # verificamos los datos                
-        if Factura.check_data_schema(data_encabezado):#and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):            
+        if Factura.check_data_schema(data_encabezado) and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):            
             print("check ok")
             CAMPOS_REQUERIDOS = list(Factura.schema.keys())   
-            #print(CAMPOS_REQUERIDOS)         
+            print(CAMPOS_REQUERIDOS)         
             info_campos = {campo: data_encabezado[campo] for campo in CAMPOS_REQUERIDOS}             
-            #print(info_campos)
+            print(info_campos)
             cur = mysql.connection.cursor()
-            #mysql.connection.cursor()
+            
             encabezado = 'INSERT INTO facturas ({}) VALUES ({})'.format(
             ', '.join(info_campos.keys()), ', '.join(['%s'] * len(info_campos)))     
-            #print("consulta",consulta)       
+            print("consulta",encabezado)       
             valores = tuple(info_campos.values())           
-            #print("valores",valores,type(valores))
-            cur.execute(encabezado, (valores))     
-            #print("---------------------------------")       
+            print("valores",valores,type(valores))
+            cur.execute(encabezado, valores)
+            #cur.execute(encabezado, (valores,))     
+            print("---------------------------------**")       
             mysql.connection.commit()
-            #print("rowcount", cur.rowcount)            
-            if cur.rowcount > 0:                                        
+            print("rowcount ----->                 ", cur.rowcount)            
+            if cur.rowcount > 0:  
+                print("--------------------------------")                                      
                 cur.execute("SELECT LAST_INSERT_ID()")   #devuelve el ultimo valor insertado en la tabla SQL             
                 res = cur.fetchall()  #todo ver de reemplazar por fetchone()              
                 id = res[0][0]                
@@ -133,6 +134,7 @@ class ElementoDetalleFactura:
         # Verificamos si la lista de elementos está vacía
         if not elementos:
             return False, "Lista vacía"  # Retornamos False y mensaje de lista vacía
+        print("lista de elementos", elementos)
         try:
             print("try")
             with mysql.connection.cursor() as cursor:
@@ -142,6 +144,7 @@ class ElementoDetalleFactura:
                     print("try 2")
                     # Verificamos para cada 'elemento' es nulo o no es un diccionario
                     if elemento is None or not isinstance(elemento, dict):
+                        print("1")
                         return False, "Elemento inválido"  # Retornamos False y mensaje de elemento inválido
                     
                     # Iteramos sobre las claves del esquema de detalla factura
@@ -150,43 +153,48 @@ class ElementoDetalleFactura:
                         # Verificamos si cada clave está presente en 'elemento'
                         if key not in elemento:
                             # Si falta alguna clave, retornamos False
+                            print("2")
                             return False, f"Falta '{key}' en el elemento"  # Retornamos False y mensaje de clave faltante
                         
                         # Verificamos que coincidan los tipos en el elemento con los tipos en schema
-                        if type(elemento[key]) != ElementoDetalleFactura.schema[key]:                
+                        if type(elemento[key]) != ElementoDetalleFactura.schema[key]:    
+                            print("3")            
                             return False, f"Tipo incorrecto para '{key}' en el elemento"  # Retornamos False y mensaje de tipo incorrecto
                     
-                    # Consultamos que cada elemento tenga stock / servicio disponible
-                    query = """
-                        SELECT 
-                            COUNT(*) 
-                        FROM 
-                            oferta 
-                        WHERE 
-                            id_usuario = %s 
-                            AND estado = 'A' 
-                            AND id_oferta = %s
-                            AND IF(
-                                (SELECT tipo FROM oferta WHERE id_oferta = %s) = 'P',
-                                stock >= %s, 
-                                disponibilidad = %s
-                            ) 
-                            
-                    """
-                    # Ejecutamos la consulta con los parámetros correspondientes
-                    cursor.execute(query, (
-                        user_id,
-                        elemento["id_oferta"],
-                        elemento["id_oferta"],
-                        elemento["cantidad"],
-                        elemento["cantidad"]                        
-                    ))
-                    # Obtenemos el resultado de la consulta
-                    result = cursor.fetchone()
+                        # Consultamos que cada elemento tenga stock / servicio disponible
+                        query = """
+                            SELECT 
+                                COUNT(*) 
+                            FROM 
+                                oferta 
+                            WHERE 
+                                id_usuario = %s 
+                                AND estado = 'A' 
+                                AND id_oferta = %s
+                                AND IF(
+                                    (SELECT tipo FROM oferta WHERE id_oferta = %s) = 'P',
+                                    stock >= %s, 
+                                    disponibilidad = %s
+                                ) 
+                                
+                        """
+                        # Ejecutamos la consulta con los parámetros correspondientes
+                        cursor.execute(query, (
+                            user_id,
+                            elemento["id_oferta"],
+                            elemento["id_oferta"],
+                            elemento["cantidad"],
+                            elemento["cantidad"]                        
+                        ))
+                        print("4")
+                        # Obtenemos el resultado de la consulta
+                        result = cursor.fetchone()
+                        print("5")
 
-                    # Verificamos si el resultado es mayor a 0
-                    if result[0] <= 0:
-                        return False, "No hay disponibilidad o el producto no pertenece al usuario"
+                        # Verificamos si el resultado es mayor a 0
+                        if result[0] <= 0:
+                            print("6")
+                            return False, "No hay disponibilidad o el producto no pertenece al usuario"
 
         finally:
             mysql.connection.close()
