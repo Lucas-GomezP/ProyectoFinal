@@ -86,7 +86,7 @@ class Factura():
         # Obtenemos 'encabezado' y 'detalle_fc' del JSON recibido
         data_encabezado, data_detalle = data_fc["encabezado"], data_fc["detalle_fc"]
         # verificamos los datos                
-        if Factura.check_data_schema(data_encabezado) and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):            
+        if Factura.check_data_schema(data_encabezado):# and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):            
             print("check ok")
             CAMPOS_REQUERIDOS = list(Factura.schema.keys())   
             print(CAMPOS_REQUERIDOS)         
@@ -114,14 +114,39 @@ class Factura():
                 # aca iria el texto que crea los registros de la tabla detalle factura
                 # digamos que dentro de los datos que recibo existe datos_detalle
                 # schema = {        "id_factura" : int,        "id_oferta":int,        "detalle": str,        "importe": float,       "cantidad": int    }               
-                result,total_fc = ElementoDetalleFactura.insertar_detalle(id, data_detalle)
+                detalle,total_fc = ElementoDetalleFactura.insertar_detalle(id, data_detalle)
+                print("valores posterior a insert",detalle)
+                print("valores posterior a insert",total_fc)
                 Factura.update_total_fc(total_fc,id)
-                #falta actualizar el stock                            
-                return Factura(info_campos).to_json(),result                
+                info_campos['importe_total']=total_fc
+                print("info campos", info_campos)
+                #falta actualizar el stock
+                print("/*/*/*/*/*//****************")
+                print(detalle,type(detalle))                     
+                for elemento in detalle:
+                    if not Factura.update_stock_oferta(elemento[2], elemento[4]):
+                        return 'Error al actualizar stock'                          
+                return Factura(info_campos).to_json(),detalle                
             raise DBError("Error al insertar datos", encabezado)
         raise TypeError("Error tipos")
         
-
+    @staticmethod
+    def update_stock_oferta(id_oferta, cantidad_vendida):
+        print("update stock oferta")
+        print(id_oferta,cantidad_vendida)
+        #actualiza el stock de una oferta
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT stock FROM oferta WHERE id_oferta = %s ",(id_oferta,))
+        stock_actual = cur.fetchone()
+        nuevo_stock = stock_actual[0] - cantidad_vendida
+        cur.execute("UPDATE oferta SET stock = %s WHERE id_oferta = %s",(nuevo_stock,id_oferta))
+        mysql.connection.commit()   
+        print("estamos locos")     
+        if cur.rowcount > 0:
+            cur.close()
+            return True
+        cur.close()
+        return False
     
 class ElementoDetalleFactura:
     schema = {        
