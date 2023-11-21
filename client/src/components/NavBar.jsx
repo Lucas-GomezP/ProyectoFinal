@@ -4,7 +4,7 @@ export const NavBar = () => {
   return (
     <nav className='flex justify-between max-h-20 px-5 bg-gray-100'>
       <section className='flex items-center gap-x-3'>
-        <img src={logo} alt='Logo de la empresa' className='w-16' />
+        <img src={logo} alt='Logo de la empresa' className='w-12' />
         <h1 className='font-semibold text-xl'>FacturIZI</h1>
       </section>
       <section className='flex w-9/12 items-center gap-x-5 justify-end'>

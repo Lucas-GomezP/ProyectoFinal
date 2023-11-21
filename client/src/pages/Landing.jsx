@@ -2,6 +2,7 @@ import { NavBar } from '../components/NavBar'
 import app from '../../public/app.png'
 import billing from '../../public/billing.png'
 import cash from '../../public/cash.png'
+import { Footer } from '../components/Footer'
 
 export function Landing () {
   return (
@@ -20,6 +21,7 @@ export function Landing () {
       <aside>
         <h2>Preguntas frecuentes</h2>
       </aside>
+      <Footer />
     </>
   )
 }
