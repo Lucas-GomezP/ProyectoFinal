@@ -6,10 +6,11 @@ from api.db.db import mysql
 
 
 # retorna todas las facturas resumidas del usuario solicitado
-@app.route('/user/<int:user_id>/facturas', methods = ['GET'])
+@app.route('/user/<int:user_id>/client/<int:client_id>/facturas', methods = ['GET'])
 @token_required
 @user_resources
-def get_all_factura_resumen_by_user_id(user_id):
+@client_resource
+def get_all_factura_resumen_by_user_id(user_id,client_id):
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM facturas WHERE id_usuario = {0}'.format(user_id))
     data = cur.fetchall()
@@ -25,11 +26,12 @@ def get_all_factura_resumen_by_user_id(user_id):
     return jsonify({"messaje": "No se encontraron Facturas relacionadas con el usuario"})
 
 # retorna la factura id, del usuario solicitado
-@app.route('/user/<int:user_id>/facturas/<int:factura_id>', methods=['GET'])
+@app.route('/user/<int:user_id>/client/<int:client_id>/facturas/<int:factura_id>', methods=['GET'])
 @token_required
 @user_resources
+@client_resource
 @factura_resource  # Verificamos que la factura solicitada puede ser accedida por el usuario
-def get_factura_by_id(user_id, factura_id):
+def get_factura_by_id(user_id, client_id,factura_id):
     cur = mysql.connection.cursor()
 
     # 1ero. consultamos para obtener la factura
@@ -58,9 +60,9 @@ def get_factura_by_id(user_id, factura_id):
                 "detalles": detalles_factura
             }
 
-        # Cierre del cursor y retorno de la respuesta
-        cur.close()
-        return jsonify(response_data)
+            # Cierre del cursor y retorno de la respuesta
+            cur.close()
+            return jsonify(response_data)
 
     # Cierre del cursor y respuesta para el caso de que la factura no se encuentre
     cur.close()
@@ -70,7 +72,7 @@ def get_factura_by_id(user_id, factura_id):
 @app.route('/user/<int:user_id>/facturas', methods=['POST'])
 @token_required
 @user_resources
-#@client_resource
+@client_resource
 def crear_fc(user_id):
     try:       
         datos = request.get_json() 
