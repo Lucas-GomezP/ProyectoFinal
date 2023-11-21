@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS facturas(
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
     fecha DATE,
-    /*importe_total DECIMAL(10,2),*/
+    importe_total DECIMAL(10,2),
     descripcion VARCHAR(255),
     estado INT(4), /*CODIGOS DE ESTADOS POSIBLES: pago, impago...*/
     PRIMARY KEY (id_factura)
