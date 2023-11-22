@@ -63,14 +63,14 @@ def create_client(id_user, id_client):
         # Captura los datos en formato JSON
         data = request.get_json()
 
-        # Crea una instancia de Cliente con los campos requeridos
+        # Crea una instancia de Cliente
         new_client = {
             'id_cliente': id_client,
             'nombre': data['nombre'],
             'id_usuario': id_user
         }
 
-        # Configura la conexión a la base de datos
+        # Conecta con la base de datos
         cur = mysql.connection.cursor()
         
         # Inserta el cliente en la base de datos
@@ -131,7 +131,7 @@ def update_client(id_user, id_client):
         # Captura los datos en formato JSON
         data = request.get_json()
 
-        # Configura la conexión a la base de datos
+        # Conecta con la base de datos
         cur = mysql.connection.cursor()        
 
         # Actualiza el cliente en la base de datos
@@ -155,7 +155,7 @@ def update_client(id_user, id_client):
 @user_resources
 def delete_client(id_user, id_client):
     try:
-        # Configura la conexión a la base de datos
+        # Conecta con la base de datos
         cur = mysql.connection.cursor()
 
         # Elimina el cliente de la base de datos
