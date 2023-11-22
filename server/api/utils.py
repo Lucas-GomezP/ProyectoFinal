@@ -51,6 +51,7 @@ def client_resource(func):
         cur = mysql.connection.cursor()
         cur.execute('SELECT id_usuario FROM clientes WHERE id_cliente = {0}'.format(id_cliente)) 
         data = cur.fetchone()
+        cur.close()
         if data:
             """ print(data) """
             id_prop = data[0]
@@ -92,6 +93,7 @@ def oferta_resource(func):
         cur = mysql.connection.cursor()
         cur.execute('SELECT id_usuario FROM oferta WHERE id_oferta = {0}'.format(id_oferta)) 
         data = cur.fetchone()
+        cur.close()
         if data:
             """ print(data) """
             id_prop = data[0]
@@ -109,6 +111,7 @@ def factura_resource(func):
         cur = mysql.connection.cursor()
         cur.execute('SELECT id_usuario FROM facturas WHERE id_factura = {0}'.format(id_factura)) 
         data = cur.fetchone()
+        cur.close()
         if data:
             """ print(data) """
             id_prop = data[0]
