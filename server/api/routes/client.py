@@ -54,7 +54,7 @@ def get_all_clients_by_user_id(user_id):
         return jsonify(clientList)
     return jsonify({"messaje": "No se encontraron clientes"})
 
-# Ruta para crear un cliente
+#CREAR UN NUEVO CLIENTE
 @app.route('/user/<int:id_user>/client/<int:id_client>', methods=['POST'])
 @token_required
 @user_resources
@@ -86,7 +86,7 @@ def create_client(id_user, id_client):
 
     except Exception as e:
         # Maneja cualquier error que pueda ocurrir durante el proceso
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"message": "Cliente no agregado"}), 500
     
      # capturo los datos en formato JSON
      #data = request.get_json()  
@@ -121,3 +121,54 @@ def create_client(id_user, id_client):
 #     connection.close()
     
 #     return jsonify({"message": "Cliente creado exitosamente", "client_id": new_client.id}), 201
+
+#ACTUALIZAR CLIENTE
+@app.route('/user/<int:id_user>/client/<int:id_client>', methods=['PUT'])
+@token_required
+@user_resources
+def update_client(id_user, id_client):
+    try:
+        # Captura los datos en formato JSON
+        data = request.get_json()
+
+        # Configura la conexión a la base de datos
+        cur = mysql.connection.cursor()        
+
+        # Actualiza el cliente en la base de datos
+        consulta = 'UPDATE clients SET nombre = %s WHERE id_cliente = %s AND id_usuario = %s'
+        valores = (data['nombre'], id_client, id_user)
+        cur.execute(consulta, valores)
+
+        # Realiza el commit y cierra la conexión
+        cur.commit()
+        cur.close()
+        
+        return jsonify({"message": "Cliente actualizado exitosamente"}), 200
+
+    except Exception as e:
+        # Maneja cualquier error que pueda ocurrir durante el proceso
+        return jsonify({"message": "Datos no actualizados"}), 500
+    
+# Eliminar un cliente
+@app.route('/user/<int:id_user>/client/<int:id_client>', methods=['DELETE'])
+@token_required
+@user_resources
+def delete_client(id_user, id_client):
+    try:
+        # Configura la conexión a la base de datos
+        cur = mysql.connection.cursor()
+
+        # Elimina el cliente de la base de datos
+        consulta = 'DELETE FROM clients WHERE id_cliente = %s AND id_usuario = %s'
+        valores = (id_client, id_user)
+        cur.execute(consulta, valores)
+
+        # Realiza el commit y cierra la conexión
+        cur.commit()
+        cur.close()
+
+        return jsonify({"message": "Cliente eliminado exitosamente"}), 200
+
+    except Exception as e:
+        # Maneja cualquier error que pueda ocurrir durante el proceso
+        return jsonify({"message": "Cliente no eliminado"}), 500
