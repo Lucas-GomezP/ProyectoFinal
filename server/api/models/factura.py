@@ -6,8 +6,7 @@ class Factura():
         "id_usuario": int,
         "id_cliente": int,
         "fecha": str,
-        "importe_total": float,
-        "descripcion": str,
+        "importe_total": float,        
         "estado": int
     }
 
@@ -44,34 +43,24 @@ class Factura():
         return True
 
     def __init__(self, row):
-        print("-------*-----------*--------")
-        print("----------")
-        print(row,type(row))
-        # self._id_factura = row['id_factura']
-        # self._id_usuario = row['id_usuario']
-        # self._id_cliente = row['id_cliente']
-        # self._fecha = row['fecha']
-        # self._importe = row['importe_total']
-        # self._descripcion = row['descripcion']
-        # self._estado = row['estado']
         self._id_factura = row[0]
         self._id_usuario = row[1]
         self._id_cliente = row[2]
         self._fecha = row[3]
-        self._importe = row[4]
-        self._descripcion = row[5]
-        self._estado = row[6]
+        self._importe = row[4]        
+        self._estado = row[5]
 
     def to_json(self):
+
         return {
             "id": self._id_factura,
             "id_usuario": self._id_usuario,
             "id_cliente": self._id_cliente,
             "fecha": self._fecha,
-            "importe": self._importe,
-            "descripcion": self._descripcion,
+            "importe": self._importe,            
             "estado": self._estado
         }
+    
     @staticmethod
     def update_total_fc(total,id):
         cur = mysql.connection.cursor()
@@ -83,80 +72,137 @@ class Factura():
         cur.close()
         return False
     
-    def create_fc(user_id,data_fc):
+    def insert_registro_fc(info_campos,user_id,client_id):    
+        print("Inserting...")    
+        curdetalle = mysql.connection.cursor()        
+        insert = "INSERT INTO facturas (id_usuario, id_cliente, fecha, importe_total, estado) VALUES (%s,%s,%s,%s,%s)"
+        valores = ( info_campos['id_usuario'],info_campos['id_cliente'],info_campos['fecha'],info_campos['importe_total'],info_campos['estado'])
+        print("query:")
+        print(insert)
+        print(valores)
+        try:
+            curdetalle.execute(insert, valores)            
+            mysql.connection.commit()    
+            if curdetalle.rowcount > 0:                                                       
+                curdetalle.execute("SELECT LAST_INSERT_ID()")   #devuelve el ultimo valor insertado en la tabla SQL             
+                res = curdetalle.fetchall()  #todo ver de reemplazar por fetchone()              
+                id_last_insert = res[0][0]
+                curdetalle.close()  
+                print("--------------------------------")
+                print("se inserto detalle")
+                print("--------------------------------")
+                return True, 'Insert OK', id_last_insert
+        except Exception as e: #mysql.connector.Error as e:
+            print("Error:", e)
+        curdetalle.close()
+        return False, 'Error insertar Factura', 0
+    @staticmethod
+    def armar_info_registro_fc(user_id,client_id):
+        # Obtener la fecha actual
+        fecha_actual = datetime.date(datetime.now())# datetime.now()
+        # Formatear la fecha en el formato específico ("%Y-%m-%d")
+        #fecha_formateada = fecha_actual.strftime("%Y-%m-%d")   
+        print("--------------------------------")
+        print(fecha_actual,type(fecha_actual)  )
+        #print(fecha_formateada,type(fecha_formateada)  ) 
+                  
+        info_campos = {           
+        "id_usuario": user_id,
+        "id_cliente": client_id,
+        "fecha": fecha_actual,
+        "importe_total": 0.00,            
+        "estado": 0
+        }
+        return info_campos
+    
+    def create_fc(user_id,client_id,data_fc):
         print("Creaando fc...")
         # Verificamos si 'data_fc' está vacío o no es un diccionario
         if not data_fc:# or not isinstance(data_fc, dict):
             raise ValueError("El JSON recibido está vacío o no es un diccionario")       
 
         # Verificamos si 'data_fc' contiene las claves 'encabezado' y 'detalle_fc'
-        if 'encabezado' not in data_fc or 'detalle_fc' not in data_fc:            
-            raise ValueError("El JSON no contiene las secciones 'encabezado' o 'detalle_fc'")
+        if 'detalle_fc' not in data_fc:            
+            raise ValueError("El JSON no contiene las seccion 'detalle_fc'")
 
         # Obtenemos 'encabezado' y 'detalle_fc' del JSON recibido
-        data_encabezado, data_detalle = data_fc["encabezado"], data_fc["detalle_fc"]
+        #data_encabezado, data_detalle = data_fc["encabezado"], data_fc["detalle_fc"]
+        data_detalle = data_fc["detalle_fc"]
         # verificamos los datos                
-        if Factura.check_data_schema(data_encabezado):# and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):            
-            print("check ok")
-            CAMPOS_REQUERIDOS = list(Factura.schema.keys())   
-            print(CAMPOS_REQUERIDOS)         
-            info_campos = {campo: data_encabezado[campo] for campo in CAMPOS_REQUERIDOS}             
-            print(info_campos)
-            cur = mysql.connection.cursor()
+        #if Factura.check_data_schema(data_encabezado):# and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):   
+        nueva_info_fc = None          
+        if ElementoDetalleFactura.check_data_schema(user_id,data_detalle): 
             
-            encabezado = 'INSERT INTO facturas ({}) VALUES ({})'.format(
-            ', '.join(info_campos.keys()), ', '.join(['%s'] * len(info_campos)))     
-            print("consulta",encabezado)       
-            valores = tuple(info_campos.values())           
-            print("valores",valores,type(valores))
-            cur.execute(encabezado, valores)
-            #cur.execute(encabezado, (valores,))     
-            print("---------------------------------**")       
-            mysql.connection.commit()
-            print("rowcount ----->                 ", cur.rowcount)            
-            if cur.rowcount > 0:  
-                print("--------------------------------")                                      
-                cur.execute("SELECT LAST_INSERT_ID()")   #devuelve el ultimo valor insertado en la tabla SQL             
-                res = cur.fetchall()  #todo ver de reemplazar por fetchone()              
-                id = res[0][0]                
-                info_campos['id_factura'] = id 
-                cur.close()               
-                # aca iria el texto que crea los registros de la tabla detalle factura
-                # digamos que dentro de los datos que recibo existe datos_detalle
-                # schema = {        "id_factura" : int,        "id_oferta":int,        "detalle": str,        "importe": float,       "cantidad": int    }               
+            info_registro_fc = Factura.armar_info_registro_fc(user_id,client_id)
+            print("")
+            print("")
+            print("se genero registro de fc:")     
+            print("")
+            print("")
+            print(info_registro_fc,type(info_registro_fc))
+            print("----------------ok")
+            result_insert, msj, id = Factura.insert_registro_fc(info_registro_fc, user_id,client_id)
+            print("resultado:",result_insert)
+            print("msj:",msj)
+            print("id:",id)
+            print("----------------")
+                                
+            if result_insert:  
+                print(msj)                                
+                # preparamos la información del encabezado que voy a enviar al frontend  
+                                  
+                nueva_info_fc = {'id_factura': id}
+                # agregamos el resto de la información al encabezado
+                nueva_info_fc.update(info_registro_fc)              
+                # procedemos a insertar el detalle de la factura en la tabla correspondiente  y calculamos el total de la factura
                 detalle,total_fc = ElementoDetalleFactura.insertar_detalle(id, data_detalle)
+
                 print("valores posterior a insert",detalle)
                 print("valores posterior a insert",total_fc)
+                # con el valor calculado procedemos a actualizar el registro correspondiente a la factura creada
                 Factura.update_total_fc(total_fc,id)
-                info_campos['importe_total']=total_fc
-                print("info campos", info_campos)
-                #falta actualizar el stock
+                # actualizamos el valor calculado para retornar al frontend
+                nueva_info_fc['importe_total']=total_fc
+                print("info campos", nueva_info_fc)
+                # actualizamos el stock de la tabla oferta
                 print("/*/*/*/*/*//****************")
                 print(detalle,type(detalle))                     
                 for elemento in detalle:
                     if not Factura.update_stock_oferta(elemento[2], elemento[4]):
-                        return 'Error al actualizar stock'                          
-                return Factura(info_campos).to_json(),detalle                
-            raise DBError("Error al insertar datos", encabezado)
+                        print("error al actualizar el stock")
+                        return 'Error al actualizar stock'      
+                
+                return nueva_info_fc,detalle                
+            raise DBError("Error al insertar datos", nueva_info_fc)
         raise TypeError("Error tipos")
         
     @staticmethod
     def update_stock_oferta(id_oferta, cantidad_vendida):
         print("update stock oferta")
         print(id_oferta,cantidad_vendida)
-        #actualiza el stock de una oferta
+        # ----------------------------------------------------------------
         cur = mysql.connection.cursor()
-        cur.execute("SELECT stock FROM oferta WHERE id_oferta = %s ",(id_oferta,))
-        stock_actual = cur.fetchone()
-        nuevo_stock = stock_actual[0] - cantidad_vendida
-        cur.execute("UPDATE oferta SET stock = %s WHERE id_oferta = %s",(nuevo_stock,id_oferta))
-        mysql.connection.commit()   
-        print("estamos locos")     
-        if cur.rowcount > 0:
-            cur.close()
-            return True
+        cur.execute("SELECT stock, tipo FROM oferta WHERE id_oferta = %s", (id_oferta,))
+        stock_actual_y_tipo = cur.fetchone()
+
+        if stock_actual_y_tipo:
+            stock, tipo = stock_actual_y_tipo  # Desempaquetar los valores
+            print("Stock:", stock)
+            print("Tipo:", tipo)
+            if tipo == 'P' or tipo =='p':
+                stock = stock - cantidad_vendida
+                cur.execute("UPDATE oferta SET stock = %s WHERE id_oferta = %s",(stock,id_oferta))
+                mysql.connection.commit()
+                print("estamos locos")
+                if cur.rowcount > 0:
+                    cur.close()
+                    return True
+
+        else:
+            print("Oferta no encontrada")
         cur.close()
         return False
+ 
     
 class ElementoDetalleFactura:
     schema = {        
@@ -170,16 +216,12 @@ class ElementoDetalleFactura:
         if not elementos:
             return False, "Lista vacía"  # Retornamos False y mensaje de lista vacía
         print("lista de elementos", elementos)
-        try:
-            print("try")
-            with mysql.connection.cursor() as cursor:
-                print("try 1")
+        try:            
+            with mysql.connection.cursor() as cursor:            
                 # Iteramos sobre la lista
-                for elemento in elementos:
-                    print("try 2")
+                for elemento in elementos:                    
                     # Verificamos para cada 'elemento' es nulo o no es un diccionario
-                    if elemento is None or not isinstance(elemento, dict):
-                        print("1")
+                    if elemento is None or not isinstance(elemento, dict):                        
                         return False, "Elemento inválido"  # Retornamos False y mensaje de elemento inválido
                     
                     # Iteramos sobre las claves del esquema de detalla factura
@@ -187,13 +229,11 @@ class ElementoDetalleFactura:
                     for key in ["id_oferta", "cantidad"]:
                         # Verificamos si cada clave está presente en 'elemento'
                         if key not in elemento:
-                            # Si falta alguna clave, retornamos False
-                            print("2")
+                            # Si falta alguna clave, retornamos False                            
                             return False, f"Falta '{key}' en el elemento"  # Retornamos False y mensaje de clave faltante
                         
                         # Verificamos que coincidan los tipos en el elemento con los tipos en schema
-                        if type(elemento[key]) != ElementoDetalleFactura.schema[key]:    
-                            print("3")            
+                        if type(elemento[key]) != ElementoDetalleFactura.schema[key]:                                
                             return False, f"Tipo incorrecto para '{key}' en el elemento"  # Retornamos False y mensaje de tipo incorrecto
                     
                         # Consultamos que cada elemento tenga stock / servicio disponible
@@ -220,22 +260,25 @@ class ElementoDetalleFactura:
                             elemento["id_oferta"],
                             elemento["cantidad"],
                             elemento["cantidad"]                        
-                        ))
-                        print("4")
+                        ))                        
                         # Obtenemos el resultado de la consulta
-                        result = cursor.fetchone()
-                        print("5")
+                        result = cursor.fetchone()                        
 
                         # Verificamos si el resultado es mayor a 0
-                        if result[0] <= 0:
-                            print("6")
+                        if result[0] <= 0:                            
                             return False, "No hay disponibilidad o el producto no pertenece al usuario"
 
         finally:
-            mysql.connection.close()
+            cursor.close()
         
         # Si todas las validaciones pasan para todos los elementos, retornamos True
-        print("chequeo detalle")
+        print("")
+        print("")
+        print("")
+        print("chequeo detalle ok")
+        print("")
+        print("")
+        print("")
         return True, "Todos los elementos son válidos"
 
 
@@ -342,29 +385,3 @@ class ListadoElementoDetalleFactura:
     def getAll(self):
         return self._elementos
     
-#  @staticmethod
-#     def check_data_schema(user_id,elementos):
-#         # Verificamos si la lista de elementos está vacía
-#         if not elementos:
-#             return False, "Lista vacía"  # Retornamos False y mensaje de lista vacía
-        
-#         # Iteramos sobre la lista
-#         for elemento in elementos:
-#             # Verificamos para cada 'elemento' es nulo o no es un diccionario
-#             if elemento is None or not isinstance(elemento, dict):
-#                 return False, "Elemento inválido"  # Retornamos False y mensaje de elemento inválido
-            
-#             # Iteramos sobre las claves del esquema de detalla factura
-#             #for key in ElementoDetalleFactura.schema:
-#             for key in ["id_oferta", "cantidad"]:
-#                 # Verificamos si cada clave está presente en 'elemento'
-#                 if key not in elemento:
-#                     # Si falta alguna clave, retornamos False
-#                     return False, f"Falta '{key}' en el elemento"  # Retornamos False y mensaje de clave faltante
-                
-#                 # Verificamos que coincidan los tipos en el elemento con los tipos en schema
-#                 if type(elemento[key]) != ElementoDetalleFactura.schema[key]:                
-#                     return False, f"Tipo incorrecto para '{key}' en el elemento"  # Retornamos False y mensaje de tipo incorrecto
-        
-#         # Si todas las validaciones pasan para todos los elementos, retornamos True
-#         return True, "Todos los elementos son válidos"
