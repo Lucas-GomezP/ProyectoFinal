@@ -44,13 +44,23 @@ class Factura():
         return True
 
     def __init__(self, row):
-        self._id_factura = row['id_factura']
-        self._id_usuario = row['id_usuario']
-        self._id_cliente = row['id_cliente']
-        self._fecha = row['fecha']
-        self._importe = row['importe_total']
-        self._descripcion = row['descripcion']
-        self._estado = row['estado']
+        print("-------*-----------*--------")
+        print("----------")
+        print(row,type(row))
+        # self._id_factura = row['id_factura']
+        # self._id_usuario = row['id_usuario']
+        # self._id_cliente = row['id_cliente']
+        # self._fecha = row['fecha']
+        # self._importe = row['importe_total']
+        # self._descripcion = row['descripcion']
+        # self._estado = row['estado']
+        self._id_factura = row[0]
+        self._id_usuario = row[1]
+        self._id_cliente = row[2]
+        self._fecha = row[3]
+        self._importe = row[4]
+        self._descripcion = row[5]
+        self._estado = row[6]
 
     def to_json(self):
         return {
@@ -231,11 +241,16 @@ class ElementoDetalleFactura:
 
     #tipo de dato de la lista de facturas
     def __init__(self, row):
-        self._id_detalle_factura = row["id_detalle_factura"]
-        self._id_factura = row["id_factura"]
-        self._id_oferta = row["id_oferta"]        
-        self._importe = row["importe"]        
-        self._cantidad = row["cantidad"]
+        # self._id_detalle_factura = row["id_detalle_factura"]
+        # self._id_factura = row["id_factura"]
+        # self._id_oferta = row["id_oferta"]        
+        # self._importe = row["importe"]        
+        # self._cantidad = row["cantidad"]
+        self._id_detalle_factura = row[0]
+        self._id_factura = row[1]
+        self._id_oferta = row[2]        
+        self._importe = row[3]        
+        self._cantidad = row[4]
     def to_json(self):
         return {
             "id_detalle": self._id_detalle_factura,

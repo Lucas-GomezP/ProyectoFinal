@@ -58,9 +58,9 @@ def get_factura_by_id(user_id, factura_id):
                 "detalles": detalles_factura
             }
 
-        # Cierre del cursor y retorno de la respuesta
-        cur.close()
-        return jsonify(response_data)
+            # Cierre del cursor y retorno de la respuesta
+            cur.close()
+            return jsonify(response_data)
 
     # Cierre del cursor y respuesta para el caso de que la factura no se encuentre
     cur.close()
