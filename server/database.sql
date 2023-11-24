@@ -23,11 +23,17 @@ CREATE TABLE IF NOT EXISTS usuarios(
 
 CREATE TABLE IF NOT EXISTS clientes(
     id_cliente INT(10) NOT NULL AUTO_INCREMENT,
-    nombre VARCHAR(255) NOT NULL,
+    nombre VARCHAR(255) NOT NULL, 
     id_usuario INT(10),
     PRIMARY KEY (id_cliente),
-    FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario) 
+    FOREIGN KEY(id_usuario) REFERENCES usuarios(id_usuario), 
+    estado INT(1) NOT NULL
 );
+
+/* EDICION TABLA CLIENTES PARA AGREGAR EL ESTADO
+ALTER TABLE `db_api_facturacion`.`clientes` 
+ADD COLUMN `estado` INT(1) NOT NULL DEFAULT 1 AFTER `id_usuario`;
+*/
 
 CREATE TABLE IF NOT EXISTS oferta(
     id_oferta INT(10) NOT NULL AUTO_INCREMENT,
