@@ -6,11 +6,11 @@ from api.db.db import mysql
 
 
 # retorna todas las facturas resumidas del usuario solicitado
-@app.route('/user/<int:user_id>/client/<int:client_id>/facturas', methods = ['GET'])
+@app.route('/user/<int:user_id>/facturas', methods = ['GET'])
 @token_required
 @user_resources
 @client_resource
-def get_all_factura_resumen_by_user_id(user_id,client_id):
+def get_all_factura_resumen_by_user_id(user_id):
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM facturas WHERE id_usuario = {0}'.format(user_id))
     data = cur.fetchall()
