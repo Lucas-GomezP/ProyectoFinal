@@ -68,14 +68,14 @@ def create_client(user_id):
         new_client = {
             'id_cliente': data['id_cliente'],
             'nombre': data['nombre'],
-            'id_usuario': user_id
+            'id_usuario': data['id_usuario']
             }
 
         # Conecta con la base de datos
         cur = mysql.connection.cursor()
         
         # Inserta el cliente en la base de datos
-        consulta = 'INSERT INTO clients (nombre) VALUES (%s, %s, %s)'
+        consulta = 'INSERT INTO clients (id_cliente,nombre, user_id) VALUES (%s, %s, %s)'
         valores = (new_client)
         cur.execute(consulta, valores)
 
