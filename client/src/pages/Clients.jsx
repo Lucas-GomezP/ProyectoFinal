@@ -3,20 +3,17 @@ import { Menu } from '../components/Menu'
 import { Loader } from '../components/Loader'
 import { useFetch } from '../hooks/useFetch'
 import { TablePagesFooter } from '../components/TablePagesFooter'
-import { useContext, useState } from 'react'
-import { UserContext } from '../context/user'
+import { useState } from 'react'
 
 const useObtainClient = () => {
-  const { user } = useContext(UserContext)
-
-  const endpointAllClient = `user/${user.id}/client`
+  const endpointAllClient = `user/${localStorage.id}/client`
 
   const requestOptions = {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      'x-access-token': user.token,
-      'user-id': user.id
+      'x-access-token': localStorage.token,
+      'user-id': localStorage.id
     }
   }
 
