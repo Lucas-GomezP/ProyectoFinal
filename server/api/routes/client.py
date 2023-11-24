@@ -55,30 +55,30 @@ def get_all_clients_by_user_id(user_id):
     return jsonify({"messaje": "No se encontraron clientes"})
 
 #CREAR UN NUEVO CLIENTE
-@app.route('/user/<int:id_user>/client', methods=['POST'])
+@app.route('/user/<int:user_id>/client', methods=['POST'])
 @token_required
 @user_resources
-def create_client(id_user):
+def create_client(user_id):
     try:
         # Captura los datos en formato JSON
         data = request.get_json()
-
+        print(data)
         # Crea una instancia de Cliente
         new_client = {
             'nombre': data['nombre'],
-            'id_usuario': id_user
+            'id_usuario': int(user_id)
         }
 
         # Conecta con la base de datos
         cur = mysql.connection.cursor()
         
         # Inserta el cliente en la base de datos
-        consulta = 'INSERT INTO clients (nombre, id_usuario) VALUES (%s, %s)'
+        consulta = 'INSERT INTO clientes (nombre, id_usuario) VALUES (%s, %s)'
         valores = (new_client['nombre'], new_client['id_usuario'])
         cur.execute(consulta, valores)
 
         # Realiza el commit y cierra la conexión
-        cur.commit()
+        mysql.connection.commit()
         cur.close()              
 
         return jsonify({"message": "Cliente creado exitosamente"}), 201
@@ -122,10 +122,11 @@ def create_client(id_user):
 #     return jsonify({"message": "Cliente creado exitosamente", "client_id": new_client.id}), 201
 
 #ACTUALIZAR CLIENTE
-@app.route('/user/<int:id_user>/client/<int:id_client>', methods=['PUT'])
+@app.route('/user/<int:user_id>/client/<int:client_id>', methods=['PUT'])
 @token_required
 @user_resources
-def update_client(id_user, id_client):
+@client_resource
+def update_client(user_id, client_id):
     try:
         # Captura los datos en formato JSON
         data = request.get_json()
@@ -134,12 +135,12 @@ def update_client(id_user, id_client):
         cur = mysql.connection.cursor()        
 
         # Actualiza el cliente en la base de datos
-        consulta = 'UPDATE clients SET nombre = %s WHERE id_cliente = %s AND id_usuario = %s'
-        valores = (data['nombre'], id_client, id_user)
+        consulta = 'UPDATE clientes SET nombre = %s WHERE id_cliente = %s AND id_usuario = %s'
+        valores = (data['nombre'], client_id, user_id)
         cur.execute(consulta, valores)
 
         # Realiza el commit y cierra la conexión
-        cur.commit()
+        mysql.connection.commit()
         cur.close()
         
         return jsonify({"message": "Cliente actualizado exitosamente"}), 200
@@ -149,21 +150,22 @@ def update_client(id_user, id_client):
         return jsonify({"message": "Datos no actualizados"}), 500
     
 # Eliminar un cliente
-@app.route('/user/<int:id_user>/client/<int:id_client>', methods=['DELETE'])
+@app.route('/user/<int:user_id>/client/<int:client_id>', methods=['DELETE'])
 @token_required
 @user_resources
-def delete_client(id_user, id_client):
+@client_resource
+def delete_client(user_id, client_id):
     try:
         # Conecta con la base de datos
         cur = mysql.connection.cursor()
 
         # Elimina el cliente de la base de datos
-        consulta = 'DELETE FROM clients WHERE id_cliente = %s AND id_usuario = %s'
-        valores = (id_client, id_user)
+        consulta = 'DELETE FROM clientes WHERE id_cliente = %s AND id_usuario = %s'
+        valores = (client_id, user_id)
         cur.execute(consulta, valores)
 
         # Realiza el commit y cierra la conexión
-        cur.commit()
+        mysql.connection.commit()
         cur.close()
 
         return jsonify({"message": "Cliente eliminado exitosamente"}), 200

@@ -199,7 +199,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
   }
 
   const handleSubmit = () => {
-    // const endpointInsertOffer = `user/${localStorage.id}/oferta`
+    // const endpointInsertBill = `user/${localStorage.id}/client/idCliente/factura`<---------------
     const detalle_fc = []
     for (let i = 0; i < currentBill.length; i++) {
       const id_oferta = currentBill[i].id_oferta
@@ -208,7 +208,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
       if (currentBill[i].tipo === 'P') {
         cantidad = actualCount[i]
       } else {
-        cantidad = 0
+        cantidad = 1
       }
       detalle_fc.push({ id_oferta, cantidad })
     }
@@ -271,7 +271,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
                 )
               })}
             </ul>}
-          </fieldset>}
+        </fieldset>}
 
       {isPendingClient
         ? <Loader />
@@ -298,7 +298,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
                 )
               })}
             </ul>}
-          </div>}
+        </div>}
 
       <table className='table-auto w-full p-4'>
         <thead>
