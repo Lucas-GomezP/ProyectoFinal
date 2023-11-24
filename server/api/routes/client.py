@@ -55,38 +55,37 @@ def get_all_clients_by_user_id(user_id):
     return jsonify({"messaje": "No se encontraron clientes"})
 
 #CREAR UN NUEVO CLIENTE
-@app.route('/user/<int:id_user>/client', methods=['POST'])
+@app.route('/user/<int:user_id>/client', methods=['POST'])
 @token_required
 @user_resources
-@client_resource
 def create_client(user_id):
     try:
         # Captura los datos en formato JSON
         data = request.get_json()
 
         # Crea una instancia de Cliente
-        new_client = {
-            'id_cliente': data['id_cliente'],
+        new_client = {            
             'nombre': data['nombre'],
-            'id_usuario': data['id_usuario']
+            'id_usuario': user_id
             }
 
         # Conecta con la base de datos
         cur = mysql.connection.cursor()
         
         # Inserta el cliente en la base de datos
-        consulta = 'INSERT INTO clients (id_cliente,nombre, user_id) VALUES (%s, %s, %s)'
-        valores = (new_client)
+        consulta = 'INSERT INTO clientes (nombre, id_usuario) VALUES (%s, %s)'
+        valores = tuple(new_client)
         cur.execute(consulta, valores)
 
         # Realiza el commit y cierra la conexión
         mysql.connection.commit()
-        mysql.connection.close()              
+        cur.close()              
 
         return jsonify({"message": "Cliente creado exitosamente"}), 201
 
     except Exception as e:
         # Maneja cualquier error que pueda ocurrir durante el proceso
+        print("error:", str(e))
         return jsonify({"message": "Cliente no agregado"}), 500
     
      # capturo los datos en formato JSON
