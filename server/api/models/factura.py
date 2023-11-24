@@ -2,6 +2,7 @@ from datetime import datetime
 from api.db.db import mysql,DBError 
 from flask import jsonify
 class Factura():
+    # definición del esquema de datos para las facturas
     schema ={
         "id_usuario": int,
         "id_cliente": int,
@@ -9,7 +10,7 @@ class Factura():
         "importe_total": float,        
         "estado": int
     }
-
+    # validación de la integridad de los datos
     @staticmethod
     def check_data_schema(data):
         # Verificamos si 'data' es nulo o no es un diccionario        
@@ -41,7 +42,7 @@ class Factura():
         print("-------*-----------*--------ok hasta aca")
         # Si hemos pasado todas las verificaciones, retornamos True        
         return True
-
+    #  inicialización de una instancia de factura a partir de una fila de datos
     def __init__(self, row):
         self._id_factura = row[0]
         self._id_usuario = row[1]
@@ -49,9 +50,8 @@ class Factura():
         self._fecha = row[3]
         self._importe = row[4]        
         self._estado = row[5]
-
+    # conversión de la instancia de factura a formato JSON
     def to_json(self):
-
         return {
             "id": self._id_factura,
             "id_usuario": self._id_usuario,
@@ -64,7 +64,7 @@ class Factura():
     @staticmethod
     def update_total_fc(total,id):
         cur = mysql.connection.cursor()
-        cur.execute("UPDATE facturas SET importe_total = %s WHERE id_factura = %s",(total,id))
+        cur.execute("UPDATE facturas SET importe_total = %s , estado =1 WHERE id_factura = %s",(total,id))
         mysql.connection.commit()        
         if cur.rowcount > 0:
             cur.close()
@@ -99,19 +99,13 @@ class Factura():
     @staticmethod
     def armar_info_registro_fc(user_id,client_id):
         # Obtener la fecha actual
-        fecha_actual = datetime.date(datetime.now())# datetime.now()
-        # Formatear la fecha en el formato específico ("%Y-%m-%d")
-        #fecha_formateada = fecha_actual.strftime("%Y-%m-%d")   
-        print("--------------------------------")
-        print(fecha_actual,type(fecha_actual)  )
-        #print(fecha_formateada,type(fecha_formateada)  ) 
-                  
+        fecha_actual = datetime.date(datetime.now())                  
         info_campos = {           
         "id_usuario": user_id,
         "id_cliente": client_id,
         "fecha": fecha_actual,
         "importe_total": 0.00,            
-        "estado": 0
+        "estado": 0 # Estado previo a ser creada de forma correcta
         }
         return info_campos
     
@@ -133,20 +127,8 @@ class Factura():
         nueva_info_fc = None          
         if ElementoDetalleFactura.check_data_schema(user_id,data_detalle): 
             
-            info_registro_fc = Factura.armar_info_registro_fc(user_id,client_id)
-            print("")
-            print("")
-            print("se genero registro de fc:")     
-            print("")
-            print("")
-            print(info_registro_fc,type(info_registro_fc))
-            print("----------------ok")
-            result_insert, msj, id = Factura.insert_registro_fc(info_registro_fc, user_id,client_id)
-            print("resultado:",result_insert)
-            print("msj:",msj)
-            print("id:",id)
-            print("----------------")
-                                
+            info_registro_fc = Factura.armar_info_registro_fc(user_id,client_id)            
+            result_insert, msj, id = Factura.insert_registro_fc(info_registro_fc, user_id,client_id)                                
             if result_insert:  
                 print(msj)                                
                 # preparamos la información del encabezado que voy a enviar al frontend  
@@ -156,22 +138,15 @@ class Factura():
                 nueva_info_fc.update(info_registro_fc)              
                 # procedemos a insertar el detalle de la factura en la tabla correspondiente  y calculamos el total de la factura
                 detalle,total_fc = ElementoDetalleFactura.insertar_detalle(id, data_detalle)
-
-                print("valores posterior a insert",detalle)
-                print("valores posterior a insert",total_fc)
                 # con el valor calculado procedemos a actualizar el registro correspondiente a la factura creada
                 Factura.update_total_fc(total_fc,id)
                 # actualizamos el valor calculado para retornar al frontend
-                nueva_info_fc['importe_total']=total_fc
-                print("info campos", nueva_info_fc)
-                # actualizamos el stock de la tabla oferta
-                print("/*/*/*/*/*//****************")
-                print(detalle,type(detalle))                     
+                nueva_info_fc['importe_total']=total_fc                
+                # actualizamos el stock de la tabla oferta                
                 for elemento in detalle:
                     if not Factura.update_stock_oferta(elemento[2], elemento[4]):
                         print("error al actualizar el stock")
-                        return 'Error al actualizar stock'      
-                
+                        return 'Error al actualizar stock'                
                 return nueva_info_fc,detalle                
             raise DBError("Error al insertar datos", nueva_info_fc)
         raise TypeError("Error tipos")
@@ -272,13 +247,6 @@ class ElementoDetalleFactura:
             cursor.close()
         
         # Si todas las validaciones pasan para todos los elementos, retornamos True
-        print("")
-        print("")
-        print("")
-        print("chequeo detalle ok")
-        print("")
-        print("")
-        print("")
         return True, "Todos los elementos son válidos"
 
 
@@ -344,15 +312,11 @@ class ElementoDetalleFactura:
         consulta = 'INSERT INTO detalle_facturas ({}) VALUES ({})'.format(
             ', '.join(campos_detalle),
             ', '.join(['%s'] * len(campos_detalle))
-        )
-        print("consulta:",consulta)
-        print("valores",valores_detalle) 
+        )        
         cur.executemany(consulta, valores_detalle)
         mysql.connection.commit()
         
         # Verificar si se insertaron los datos
-        # Verificar si se insertaron los datos
-        
         if cur.rowcount > 0:
             # Obtener los registros recién insertados
             consulta_select = 'SELECT * FROM detalle_facturas WHERE id_factura = %s'
