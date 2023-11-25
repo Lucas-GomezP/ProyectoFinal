@@ -4,23 +4,7 @@ from flask import jsonify, request #permite devolver json
 from api.utils import token_required, client_resource, user_resources
 from api.db.db import mysql
 
-#from api.utils import token_required, client_resource, user_resources
-
-# @app.route('/test_client', methods=['GET'])
-# def test():   
-#     return jsonify( {"message": "ejemplo test clientes"} ), 404
-
-
-
-# @app.route('/users', methods=['GET'])
-# def get_client_by_id():
-#     cur = mysql.connection.cursor()
-#     cur.execute('SELECT * FROM usuarios')
-#     data = cur.fetchall()
-    
-#     return jsonify( {"message": [data]} ), 404
-
-
+# RETORNA LOS DATOS DEL CLIENTE SOLICITADO
 @app.route('/user/<int:user_id>/client/<int:client_id>', methods = ['GET'])
 @token_required
 @user_resources
@@ -29,10 +13,7 @@ def get_client_by_id(user_id,client_id):
     cur = mysql.connection.cursor()
     cur.execute('SELECT * FROM clientes WHERE  id_usuario = {0} and  id_cliente = {1}'.format(user_id,client_id))
     data = cur.fetchall()
-    print("------",user_id,"--------------------------",client_id,"print data",data)
     print(cur.rowcount)
-    print("--------------------------------")
-    print(data)
     if cur.rowcount > 0:
         objClient = Client(data[0])
         return jsonify( objClient.to_json() )
@@ -75,6 +56,8 @@ def create_client(user_id):
         # Inserta el cliente en la base de datos
         consulta = 'INSERT INTO clientes (nombre, id_usuario) VALUES (%s, %s)'
         valores = (new_client['nombre'], new_client['id_usuario'])
+        print(consulta)
+        print(valores)
         cur.execute(consulta, valores)
 
         # Realiza el commit y cierra la conexión
@@ -85,41 +68,9 @@ def create_client(user_id):
 
     except Exception as e:
         # Maneja cualquier error que pueda ocurrir durante el proceso
+        print("error:", str(e))
         return jsonify({"message": "Cliente no agregado"}), 500
-    
-     # capturo los datos en formato JSON
-     #data = request.get_json()  
-    
-    # Chequear que los datos requeridos estén presentes en 'data'
-     #campos_requeridos = ['name', 'id_cliente']  # Por ejemplo, suponiendo que 'name' y 'email' son campos obligatorios
-     #if not all(campo in data for campo in campos_requeridos):
-     # return jsonify({"message": "Faltan datos obligatorios"}), 400
-    
-    # new_client = Client(data)  
-    # Conexión a la base de datos
-    # cur = mysql.connector.connect()
-    # cur.execute('INSERT INTO clientes (id_cliente, nombre, id_usuario) VALUES ('{0}','{1}','{2}')'.format(data))
-    # cur.connection.commit()   
-     #   return jsonify({"messaje" : "Cliente registrado"})
-#         host='tu_host',
-#         user='tu_usuario',
-#         password='tu_contraseña',
-#         database='tu_base_de_datos'
-#     )
-    
-#     cursor = connection.cursor()
-    
-#     # Insertar el nuevo cliente en la base de datos
-#     cursor.execute("INSERT INTO clientes (name, id_usuario) VALUES (%s, %s)")#, (new_client.name, id_user))
-    
-#     # Guardar los cambios en la base de datos
-#     connection.commit()
-    
-#     # Cerrar la conexión
-#     cursor.close()
-#     connection.close()
-    
-#     return jsonify({"message": "Cliente creado exitosamente", "client_id": new_client.id}), 201
+
 
 #ACTUALIZAR CLIENTE
 @app.route('/user/<int:user_id>/client/<int:client_id>', methods=['PUT'])
@@ -129,9 +80,7 @@ def create_client(user_id):
 def update_client(user_id, client_id):
     try:
         # Captura los datos en formato JSON
-        data = request.get_json()
-
-        # Conecta con la base de datos
+        data = request.get_json()        
         cur = mysql.connection.cursor()        
 
         # Actualiza el cliente en la base de datos
@@ -143,10 +92,11 @@ def update_client(user_id, client_id):
         mysql.connection.commit()
         cur.close()
         
+        
         return jsonify({"message": "Cliente actualizado exitosamente"}), 200
 
     except Exception as e:
-        # Maneja cualquier error que pueda ocurrir durante el proceso
+        # Maneja cualquier error que pueda ocurrir durante el proceso       
         return jsonify({"message": "Datos no actualizados"}), 500
     
 # Eliminar un cliente
@@ -155,12 +105,13 @@ def update_client(user_id, client_id):
 @user_resources
 @client_resource
 def delete_client(user_id, client_id):
+    #agregar un campo en la tabla de la DB clientes llamado estado (inactivo = borrado, activo = disponible)
     try:
         # Conecta con la base de datos
         cur = mysql.connection.cursor()
 
         # Elimina el cliente de la base de datos
-        consulta = 'DELETE FROM clientes WHERE id_cliente = %s AND id_usuario = %s'
+        consulta = 'UPDATE clientes SET estado = 0 WHERE id_cliente = %s AND id_usuario = %s'
         valores = (client_id, user_id)
         cur.execute(consulta, valores)
 
