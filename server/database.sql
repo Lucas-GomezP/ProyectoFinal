@@ -60,7 +60,6 @@ CREATE TABLE IF NOT EXISTS facturas(
     FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
     fecha DATE,
     importe_total DECIMAL(10,2),
-    descripcion VARCHAR(255),
     estado INT(4), /*CODIGOS DE ESTADOS POSIBLES: pago, impago...*/
     PRIMARY KEY (id_factura)
 );
@@ -90,6 +89,13 @@ ADD CONSTRAINT `detalle_facturas_ibfk_1`
   FOREIGN KEY (`id_factura`)
   REFERENCES `db_api_facturacion`.`facturas` (`id_factura`);
 */
+-- --------------------------------------------------------------
+-- TRUNCATE HELP
+-- --------------------------------------------------------------
+SET FOREIGN_KEY_CHECKS = 0; -- Deshabilitar comprobación de claves foráneas
+-- Realizar las operaciones de eliminación o truncado
+-- EJEMPLO -- TRUNCATE TABLE detalle_facturas; TRUNCATE TABLE facturas;
+SET FOREIGN_KEY_CHECKS = 1; -- Volver a habilitar comprobación de claves foráneas
 -- --------------------------------------------------------------
 -- INSERT DE PRUEBA
 -- --------------------------------------------------------------

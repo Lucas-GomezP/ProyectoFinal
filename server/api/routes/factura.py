@@ -67,19 +67,20 @@ def get_factura_by_id(user_id, factura_id):
     return jsonify({"message": "ID not found"}), 404
 
 # crea factura. y en caso de exito retorna la factura creada. de lo contrario retorna el error.
-@app.route('/user/<int:user_id>/facturas', methods=['POST'])
+@app.route('/user/<int:user_id>/client/<int:client_id>/facturas', methods=['POST'])
 @token_required
 @user_resources
-#@client_resource
-def crear_fc(user_id):
+@client_resource
+def crear_fc(user_id,client_id):
     try:       
         datos = request.get_json() 
         print(datos)
-        new_factura,detalle_new_fc = Factura.create_fc(user_id,datos)
+        new_factura,detalle_new_fc = Factura.create_fc(user_id,client_id,datos)
+        print("nueva factura:")
+        print(new_factura)
         return jsonify({"encabezado":new_factura,"detalle":detalle_new_fc,"message": "Se creo FC de forma exitosa"}), 201
-    except: # mysql.connector.Error as e:
-        return jsonify({"message":"erorrada"}), 408
-       # return jsonify({"message": f"Error en la base de datos: {e}"}), 500
+    except Exception as e:        
+        return jsonify({"message": f"Error en la base de datos: {e}"}), 500
     
 """
 @app.route('/user/<int:user_id>/oferta/<int:oferta_id>', methods=['DELETE'])
