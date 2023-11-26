@@ -58,9 +58,9 @@ def create_user():
 
         # Se verifica si el usuario ya existe
         cur.execute("SELECT * FROM usuarios WHERE nombreusuario = %s", (nombreusuario,))
-        usuario_existe = cur.fetchone()
+        usuario_existente = cur.fetchone()
 
-        if usuario_existe:
+        if usuario_existente:
             return {"message: ": "El usuario ya existe."}, 400     
         # Insertar nuevo usuario
         cur.execute("INSERT INTO usuarios (nombreusuario, contrasenia) VALUES (%s, %s)", (nombreusuario, contrasenia))
