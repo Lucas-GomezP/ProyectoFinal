@@ -42,3 +42,73 @@ def get_all():
     cursor.close()
 
     return str(data)
+
+
+@app.route('/users', methods = ['POST'])
+def create_user(user_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur = mysql.connection.cursor()
+        #data = request.get_json() #para implementar con metodo de clase
+        nombreusuario = request.get_json()['nombreusuario']
+        contrasenia = request.get_json()['nombreusuario']
+        #surname = request.get_json()['surname']
+        #dni = request.get_json()['dni']
+        #email = request.get_json()['email']
+
+        # Se verifica si el usuario ya existe
+        cur.execute("SELECT * FROM usuarios WHERE nombreusuario = %s", (nombreusuario,))
+        usuario_existe = cur.fetchone()
+
+        if usuario_existe:
+            return {"message: ": "El usuario ya existe."}, 400     
+        # Insertar nuevo usuario
+        cur.execute("INSERT INTO usuarios (nombreusuario, contrasenia) VALUES (%s, %s)", (nombreusuario, contrasenia))
+        mysql.connection.commit()        
+        cur.close()
+        return {"message: ": "Usuario creado exitosamente"}, 201
+    
+    except Exception as e:
+        return str(e), 500 #Error interno del servidor
+    
+
+@app.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    try:
+        cur = mysql.connection.cursor()
+
+        # Se verifica si el usuario existe antes de actualizar
+        cur.execute("SELECT * FROM usuarios WHERE id_usuario = %s", (user_id,))
+        usuario_existente = cur.fetchone()
+        if not usuario_existente:
+            return {"message": "Usuario no encontrado."}, 404
+
+        # Se obtienen datos del JSON
+        nombreusuario = request.get_json()['nombreusuario']
+        contrasenia = request.get_json()['contrasenia']
+        # Se actualizan los datos del usuario en la BDD
+        cur.execute("UPDATE usuarios SET nombreusuario = %s, contrasenia = %s WHERE id_usuario = %s", (nombreusuario, contrasenia, user_id))
+        mysql.connection.commit()
+        cur.close()
+
+        return {"message": "Usuario actualizado exitosamente"}, 200
+    except Exception as e:
+        return str(e), 500  # Error interno del servidor
+    
+    
+@app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        cur = mysql.connection.cursor()
+        # Verificar si el usuario existe antes de eliminar
+        cur.execute("SELECT * FROM usuarios WHERE id_usuario = %s", (user_id,))
+        usuario_existente = cur.fetchone()
+
+        if not usuario_existente:
+            return {"message": "Usuario no encontrado."}, 404
+        cur.execute("DELETE FROM usuarios WHERE id_usuario = %s", (user_id,)) # Eliminar el usuario
+        mysql.connection.commit()
+        cur.close()
+        return {"message": "Usuario eliminado exitosamente"}, 200
+    except Exception as e:
+        return str(e), 500  # Error interno del servidor
