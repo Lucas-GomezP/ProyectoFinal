@@ -45,7 +45,7 @@ def get_all():
 
 
 @app.route('/users', methods = ['POST'])
-def create_user(user_id):
+def create_user():
     try:
         cur = mysql.connection.cursor()
         cur = mysql.connection.cursor()
@@ -76,14 +76,12 @@ def create_user(user_id):
 def update_user(user_id):
     try:
         cur = mysql.connection.cursor()
-
         # Se verifica si el usuario existe antes de actualizar
-        cur.execute("SELECT * FROM usuarios WHERE id_usuario = %s", (user_id,))
+        cur.execute("SELECT * FROM usuarios WHERE id_usuario = %s", (user_id,)) #Verifica si existe usuario
         usuario_existente = cur.fetchone()
         if not usuario_existente:
             return {"message": "Usuario no encontrado."}, 404
-
-        # Se obtienen datos del JSON
+        
         nombreusuario = request.get_json()['nombreusuario']
         contrasenia = request.get_json()['contrasenia']
         # Se actualizan los datos del usuario en la BDD
