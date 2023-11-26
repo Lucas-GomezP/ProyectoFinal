@@ -82,16 +82,14 @@ def crear_fc(user_id,client_id):
     except Exception as e:        
         return jsonify({"message": f"Error en la base de datos: {e}"}), 500
     
-"""
-@app.route('/user/<int:user_id>/oferta/<int:oferta_id>', methods=['DELETE'])
+@app.route('/user/<int:user_id>/facturas/<int:factura_id>', methods=['DELETE'])
 @token_required
 @user_resources
-@oferta_resource
-def desactivar_oferta(user_id, oferta_id):
+def desactivar_oferta(user_id, factura_id):
     try:
         # Comprobamos si la oferta pertenece al usuario
         cur = mysql.connection.cursor()
-        cur.execute('SELECT * FROM oferta WHERE id_oferta = %s AND id_usuario = %s AND estado = "A"', (oferta_id, user_id))
+        cur.execute('SELECT * FROM facturas WHERE id_oferta = %s AND id_usuario = %s AND estado = "A"', (factura_id, user_id))
         oferta = cur.fetchone()
         cur.close()
 
@@ -99,16 +97,17 @@ def desactivar_oferta(user_id, oferta_id):
             return jsonify({"message": "Oferta no encontrada"}), 404
 
         print("borrando oferta: ",oferta)
-        # Cambiamos el estado de la oferta a inactivo ('I')
+        # Cambiamos el estado de la oferta a anulado ('2')
         cur = mysql.connection.cursor()
-        cur.execute('UPDATE oferta SET estado = %s WHERE id_oferta = %s', ('I', oferta_id))
+        cur.execute('UPDATE facturas SET estado = %s WHERE id_oferta = %s', ('2', factura_id))
         mysql.connection.commit()
         cur.close()
 
-        return jsonify({"message": "Oferta desactivada exitosamente"}), 200
+        return jsonify({"message": "FC anulada exitosamente"}), 200
     except mysql.connector.Error as e:
         return jsonify({"message": f"Error en la base de datos: {e}"}), 500
     
+"""    
 @app.route('/user/<int:user_id>/oferta/<int:oferta_id>', methods=['PUT'])
 @token_required
 @user_resources
