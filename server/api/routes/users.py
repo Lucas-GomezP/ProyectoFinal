@@ -35,7 +35,7 @@ def login():
 
 
 @app.route('/users')
-def get_all():
+def get_all_users():
     cursor = mysql.connection.cursor()
     cursor.execute('SELECT * FROM usuarios')
     data = cursor.fetchall()
@@ -51,7 +51,7 @@ def create_user():
         cur = mysql.connection.cursor()
         #data = request.get_json() #para implementar con metodo de clase
         nombreusuario = request.get_json()['nombreusuario']
-        contrasenia = request.get_json()['nombreusuario']
+        contrasenia = request.get_json()['contrasenia']
         #surname = request.get_json()['surname']
         #dni = request.get_json()['dni']
         #email = request.get_json()['email']
