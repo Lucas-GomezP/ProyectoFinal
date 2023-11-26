@@ -1,0 +1,96 @@
+Map([<Rule '/static/<filename>' (OPTIONS, GET, HEAD) -> static>,
+*<Rule '/user/<user_id>/client/<client_id>'* (OPTIONS, GET, HEAD) -> get_client_by_id>,
+# retorna los datos cliente id solicitado
+
+*<Rule '/user/<user_id>/client'* (OPTIONS, GET, HEAD) -> get_all_clients_by_user_id>,
+# retorna todos los clientes del usuario logueado
+
+*<Rule '/user/<user_id>/client'* (OPTIONS, POST) -> create_client>,
+# crea un cliente nuevo para el usuario id logueado. Necesita json con llave "nombre"
+*#data = request.get_json()* asi lo capturamos  ---->   *'nombre': data['nombre']*
+
+*#<Rule '/user/<user_id>/client/<client_id>' (OPTIONS, PUT) -> update_client>,*
+# editamos datos del cliente. por el momento el dato es nombre.
+
+*<Rule '/user/<user_id>/client/<client_id>' (OPTIONS, DELETE) -> delete_client>,*
+# Borrar Cliente. Anular/Desactivar Cliente
+
+*#<Rule '/login' (OPTIONS, POST) -> login>,*
+
+*<Rule '/users' (OPTIONS, GET, HEAD) -> get_all>,*
+# este esta para control de los usuarios cargados. y poder acceder de forma facil a la info
+
+*<Rule '/user/<user_id>/oferta' (OPTIONS, GET, HEAD) -> get_all_oferta_by_user_id>,*
+# retorna todas las ofertas *activas* del usuario id.
+
+*<Rule '/user/<user_id>/oferta/<oferta_id>' (OPTIONS, GET, HEAD) -> get_oferta_by_id>,*
+# retorna la oferta con id dado del usuario id logueado
+
+*<Rule '/user/<user_id>/oferta' (OPTIONS, POST) -> insertar>,*
+# inserta una nueva oferta vinculada con el usuario id logueado
+*#data = request.get_json()*
+{
+  "nombre": "Producto gg",
+  "tipo": "S",
+  "descripcion": "Este es un producto de ejemplo",
+  "precio": 49.99,
+  "stock": 100,
+  "disponibilidad": true,
+  "id_usuario": 1,
+  "estado": "A"
+}
+Con respecto a esto, es necesario definir su estado, puede venir tanto A como puede venir en estado I. 
+*#TODO:*
+- esto nos estaria obligando a agregar un o usar un put para activarlo cuando querramos ponerlo activo
+
+*<Rule '/user/<user_id>/oferta/<oferta_id>' (OPTIONS, DELETE) -> desactivar_oferta>,*
+# Borrar Oferta. (Anular/Desactivar) Oferta en estado "I"
+
+*<Rule '/user/<user_id>/oferta/<oferta_id>' (OPTIONS, PUT) -> update_oferta>,*
+# Editar Oferta
+*#data = request.get_json()*
+{
+  "nombre": "oferta 9",
+  "tipo": "S",
+  "descripcion": "Este es un producto editado",
+  "precio": 0.99,
+  "stock": 1,
+  "disponibilidad": true,
+  "id_usuario": 1,
+  "estado": "A"
+}
+
+*<Rule '/user/<user_id>/facturas' (OPTIONS, GET, HEAD) -> get_all_factura_resumen_by_user_id>,*
+# Retorna todas las Fc vinculadas con el usuario id logueado
+
+*<Rule '/user/<user_id>/facturas/<factura_id>' (OPTIONS, GET, HEAD) -> get_factura_by_id>,*
+# Retorna los datos de la Fc solicitada
+
+*<Rule '/user/<user_id>/client/<client_id>/facturas' (OPTIONS, POST) -> crear_fc>])*
+# Genera una Fc nueva.
+*#data = request.get_json()*
+{
+  "detalle_fc": [
+    {
+      "id_oferta": 3,
+      "cantidad": 1
+    },
+    {
+      "id_oferta": 4,
+      "cantidad": 1
+    },
+    {
+      "id_oferta": 5,
+      "cantidad": 1
+    }
+  ]
+}
+
+*En construccion*
+- Las facturas podran anularse y estas quedaran en estado = 2. Siendo 0 estado de preparacion, 1 estado de creada, 2 estado anulada, 3 parcialmente pagada, 4 pagada.
+- Los estados de pago son transitorios. Eso no esta definido aun. pero bueno para implementar la posible anulacion tome este criterio. 
+- El anular podria llegar a ser al cuete, pero bueno, lo dejo armado para dar la funcionalidad. Esto nos obliga a ver tema de cuando se puede anular, en teoria cuando haya habido un inconvneiente en su creacion.
+- Ver tema de los productos vendidos, stock y demas yerbas..... no se me ocurre nada mas. je
+@app.route('/user/<int:user_id>/facturas/<int:factura_id>', methods=['DELETE'])
+
+algo similar pasa con editar fc, pero bueno luego lo pienso mejor.
