@@ -81,33 +81,38 @@ def crear_fc(user_id,client_id):
         return jsonify({"encabezado":new_factura,"detalle":detalle_new_fc,"message": "Se creo FC de forma exitosa"}), 201
     except Exception as e:        
         return jsonify({"message": f"Error en la base de datos: {e}"}), 500
-    
+
 @app.route('/user/<int:user_id>/facturas/<int:factura_id>', methods=['DELETE'])
 @token_required
 @user_resources
-def desactivar_oferta(user_id, factura_id):
+def desactivar_fc(user_id, factura_id):    
     try:
         # Comprobamos si la oferta pertenece al usuario
-        cur = mysql.connection.cursor()
-        cur.execute('SELECT * FROM facturas WHERE id_oferta = %s AND id_usuario = %s AND estado = "A"', (factura_id, user_id))
-        oferta = cur.fetchone()
-        cur.close()
+        # cur = mysql.connection.cursor()
+        # cur.execute('SELECT * FROM facturas WHERE id_oferta = %s AND id_usuario = %s AND estado = "A"', (factura_id, user_id))
+        # oferta = cur.fetchone()
+        # cur.close()
 
-        if not oferta:
-            return jsonify({"message": "Oferta no encontrada"}), 404
+        # if not oferta:
+        #     return jsonify({"message": "Oferta no encontrada"}), 404
 
-        print("borrando oferta: ",oferta)
+        #print("borrando oferta: ",oferta)
         # Cambiamos el estado de la oferta a anulado ('2')
         cur = mysql.connection.cursor()
-        cur.execute('UPDATE facturas SET estado = %s WHERE id_oferta = %s', ('2', factura_id))
+        query = 'UPDATE facturas SET estado = %s WHERE id_factura = %s and id_usuario = %s'
+        cur.execute(query, ('2', factura_id,user_id))
+        print()
         mysql.connection.commit()
         cur.close()
 
-        return jsonify({"message": "FC anulada exitosamente"}), 200
+        if cur.rowcount > 0:  # Verifica si se modificó algún registro en la base de datos
+            return jsonify({"message": "FC anulada exitosamente", "success": True}), 200
+        else:
+            return jsonify({"message": "No se encontró la factura o no se realizó ningún cambio", "success": False}), 404
     except mysql.connector.Error as e:
-        return jsonify({"message": f"Error en la base de datos: {e}"}), 500
+        return jsonify({"message": f"Error en la base de datos: {e}", "success": False}), 500
     
-"""    
+"""        
 @app.route('/user/<int:user_id>/oferta/<int:oferta_id>', methods=['PUT'])
 @token_required
 @user_resources
