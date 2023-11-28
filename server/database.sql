@@ -30,6 +30,14 @@ CREATE TABLE IF NOT EXISTS clientes(
     estado INT(1) NOT NULL
 );
 
+ALTER TABLE clientes
+ADD COLUMN cuit_cuil VARCHAR(20) NOT NULL,
+ADD COLUMN apellido VARCHAR(255) NOT NULL,
+ADD COLUMN dni VARCHAR(15) NOT NULL,
+ADD COLUMN domicilio VARCHAR(255),
+ADD COLUMN telefono VARCHAR(20),
+ADD COLUMN email VARCHAR(255);
+
 /* EDICION TABLA CLIENTES PARA AGREGAR EL ESTADO
 ALTER TABLE `db_api_facturacion`.`clientes` 
 ADD COLUMN `estado` INT(1) NOT NULL DEFAULT 1 AFTER `id_usuario`;
@@ -115,6 +123,33 @@ INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CL
 INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 3', '2');
 INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 4', '3');
 INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 5', '2');
+
+/*PARA AGREGAR CAMPOS*/
+UPDATE clientes
+SET cuit_cuil = '12345678901', apellido = 'Apellido 1', dni = '98765463', domicilio = 'Calle 1',
+    telefono = '555-1234', email = 'nuevo@email.com' WHERE id_cliente = 1;
+
+UPDATE clientes
+SET cuit_cuil = '12345678902',  apellido = 'Apellido 2', dni = '98765555', domicilio = 'Calle 2',
+    telefono = '432-1234', email = 'cualquiera@email.com' WHERE id_cliente = 2;
+
+UPDATE clientes
+SET cuit_cuil = '12345678905', apellido = 'Apellido 3', dni = '98765432', domicilio = 'Calle 3',
+    telefono = '268-1234', email = 'blablabla@email.com' WHERE id_cliente = 3;
+
+UPDATE clientes
+SET cuit_cuil = '12345675248', apellido = 'Apellido 4', dni = '98765222', domicilio = 'Calle 4',
+    telefono = '566-1234', email = 'unica@email.com' WHERE id_cliente = 4;
+
+UPDATE clientes
+SET cuit_cuil = '12345679875', apellido = 'Apellido 5', dni = '98765123', domicilio = 'Calle 5',
+    telefono = '123-1234', email = 'a@email.com' WHERE id_cliente = 5;
+
+UPDATE clientes
+SET cuit_cuil = '12345675197', apellido = 'Apellido 6', dni = '98765785', domicilio = 'Calle 6',
+    telefono = '456-1234', email = 'unica@email.com' WHERE id_cliente = 6;
+
+
 -- --------------------------------------------------------------
 INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Elegant Soft Mouse', 'S', 'Carbonite web goalkeeper gloves are ergonomically designed to give easy fit', '844.00', '5', '1', '4', 'A');
 INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Small Cotton Table', 'S', 'New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016', '436.00', '3', '1', '1', 'A');
