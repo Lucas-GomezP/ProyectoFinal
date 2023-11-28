@@ -49,21 +49,26 @@ def create_user():
     try:
         cur = mysql.connection.cursor()
         cur = mysql.connection.cursor()
-        #data = request.get_json() #para implementar con metodo de clase
-        nombreusuario = request.get_json()['nombreusuario']
-        contrasenia = request.get_json()['nombreusuario']
-        #surname = request.get_json()['surname']
-        #dni = request.get_json()['dni']
-        #email = request.get_json()['email']
+        data = request.get_json()
+ 
 
         # Se verifica si el usuario ya existe
-        cur.execute("SELECT * FROM usuarios WHERE nombreusuario = %s", (nombreusuario,))
+        cur.execute("SELECT * FROM usuarios WHERE nombreusuario = %s", (data['nombreusuario'],))
         usuario_existente = cur.fetchone()
 
         if usuario_existente:
             return {"message: ": "El usuario ya existe."}, 400     
+        
+        CAMPOS_REQUERIDOS = ['nombreusuario', 'contrasenia', 'nombre', 'apellido', 'dni', 'telefono', 'email']
+        # Se comprueban que los campos estén completos
+        if not data or not all(campo in data for campo in CAMPOS_REQUERIDOS):
+            return jsonify({"message": "Datos incompletos"}), 400
+
         # Insertar nuevo usuario
-        cur.execute("INSERT INTO usuarios (nombreusuario, contrasenia) VALUES (%s, %s)", (nombreusuario, contrasenia))
+        cur.execute("INSERT INTO usuarios (nombreusuario, contrasenia, nombre, apellido, dni, telefono, email) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
+                    (data['nombreusuario'], data['contrasenia'], data['nombre'], data['apellido'], data['dni'],
+                     data['telefono'], data['email']))
+        
         mysql.connection.commit()        
         cur.close()
         return {"message: ": "Usuario creado exitosamente"}, 201
@@ -82,10 +87,11 @@ def update_user(user_id):
         if not usuario_existente:
             return {"message": "Usuario no encontrado."}, 404
         
-        nombreusuario = request.get_json()['nombreusuario']
-        contrasenia = request.get_json()['contrasenia']
+        data = request.get_json()
         # Se actualizan los datos del usuario en la BDD
-        cur.execute("UPDATE usuarios SET nombreusuario = %s, contrasenia = %s WHERE id_usuario = %s", (nombreusuario, contrasenia, user_id))
+        cur.execute("UPDATE usuarios SET nombreusuario = %s, contrasenia = %s, nombre = %s, apellido = %s, dni = %s, telefono = %s, email = %s WHERE id_usuario = %s", 
+                    (data['nombreusuario'], data['contrasenia'], data['nombre'], data['apellido'], data['dni'],
+                     data['domicilio'], data['telefono'], data['email']))
         mysql.connection.commit()
         cur.close()
 
@@ -104,7 +110,7 @@ def delete_user(user_id):
 
         if not usuario_existente:
             return {"message": "Usuario no encontrado."}, 404
-        cur.execute("DELETE FROM usuarios WHERE id_usuario = %s", (user_id,)) # Eliminar el usuario
+        cur.execute("UPDATE usuarios SET estado = %s WHERE id_usuario = %s", (0,user_id,)) # Eliminar el usuario
         mysql.connection.commit()
         cur.close()
         return {"message": "Usuario eliminado exitosamente"}, 200
