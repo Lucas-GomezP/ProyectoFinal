@@ -41,21 +41,37 @@ def get_all_clients_by_user_id(user_id):
 @user_resources
 def create_client(user_id):
     try:
+        CAMPOS_REQUERIDOS = ['nombre', 'id_usuario', 'cuitCuil', 'apellido', 'dni', 'domicilio', 'telefono', 'email']
+        
         # Captura los datos en formato JSON
         data = request.get_json()
         print(data)
+
+        # Se comprueban que los campos estén completos
+        if not data or not all(campo in data for campo in CAMPOS_REQUERIDOS):
+            return jsonify({"message": "Datos incompletos"}), 400
+        
         # Crea una instancia de Cliente
         new_client = {
             'nombre': data['nombre'],
-            'id_usuario': int(user_id)
-        }
-
+            'id_usuario': user_id,
+            'cuitCuil' : data['cuitCuil'],
+            'apellido' : data['apellido'], 
+            'dni' : data['dni'],
+            'domicilio' : data['domicilio'],
+            'telefono' : data['telefono'],
+            'email' : data['email'], 
+            'estado' : 1
+                }        
+        
         # Conecta con la base de datos
         cur = mysql.connection.cursor()
         
         # Inserta el cliente en la base de datos
-        consulta = 'INSERT INTO clientes (nombre, id_usuario) VALUES (%s, %s)'
-        valores = (new_client['nombre'], new_client['id_usuario'])
+        consulta = 'INSERT INTO clientes (nombre, id_usuario, cuit_cuil, apellido, dni, domicilio, telefono, email, estado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+        valores = (new_client['nombre'], new_client['id_usuario'], new_client['cuitCuil'], 
+                   new_client['apellido'], new_client['dni'], new_client['domicilio'], new_client['telefono'],
+                   new_client['email'], new_client['estado'])
         print(consulta)
         print(valores)
         cur.execute(consulta, valores)
@@ -84,19 +100,19 @@ def update_client(user_id, client_id):
         cur = mysql.connection.cursor()        
 
         # Actualiza el cliente en la base de datos
-        consulta = 'UPDATE clientes SET nombre = %s WHERE id_cliente = %s AND id_usuario = %s'
-        valores = (data['nombre'], client_id, user_id)
+        consulta = 'UPDATE clientes SET nombre = %s, cuit_cuil = %s, apellido = %s, dni = %s, domicilio = %s, telefono = %s, email = %s, estado = %s WHERE id_cliente = %s AND id_usuario = %s'
+        valores = (data['nombre'], data['cuitCuil'], data['apellido'], data['dni'], data['domicilio'], 
+                   data['telefono'], data['email'], data['estado'], client_id, user_id)
         cur.execute(consulta, valores)
 
         # Realiza el commit y cierra la conexión
         mysql.connection.commit()
-        cur.close()
-        
-        
+        cur.close()  
         return jsonify({"message": "Cliente actualizado exitosamente"}), 200
 
     except Exception as e:
-        # Maneja cualquier error que pueda ocurrir durante el proceso       
+        # Maneja cualquier error que pueda ocurrir durante el proceso  
+        print("error:", str(e))     
         return jsonify({"message": "Datos no actualizados"}), 500
     
 # Eliminar un cliente
@@ -105,7 +121,7 @@ def update_client(user_id, client_id):
 @user_resources
 @client_resource
 def delete_client(user_id, client_id):
-    #agregar un campo en la tabla de la DB clientes llamado estado (inactivo = borrado, activo = disponible)
+    # Agregar un campo en la tabla de la DB clientes llamado estado (inactivo = borrado, activo = disponible)
     try:
         # Conecta con la base de datos
         cur = mysql.connection.cursor()
