@@ -7,7 +7,7 @@ export const ModalUI = ({ children, visible, setVisible }) => {
       {visible &&
 
         <article
-          className='p-14 pt-24 lg:pt-14 absolute top-0 left-0 w-full h-full'
+          className='p-14 pt-24 lg:pt-14 absolute top-0 left-0 w-full h-screen'
         >
           <div className='bg-slate-100 h-full rounded-xl p-4 flex flex-col gap-4 overflow-auto ring ring-slate-200 z-10'>
             <div className='flex justify-between items-center'>
@@ -20,7 +20,7 @@ export const ModalUI = ({ children, visible, setVisible }) => {
                 className='hover:bg-red-500 w-8 h-8 rounded cursor-pointer ring ring-red-500'
               />
             </div>
-            <div className='z-10'>
+            <div className='z-10 h-full'>
               {children}
             </div>
           </div>

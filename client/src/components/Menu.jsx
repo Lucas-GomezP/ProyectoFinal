@@ -1,18 +1,18 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { Header } from './Header'
 import { IconDashboard, IconProducts, IconClient, IconBills, IconProfile, IconArrow } from '../components/Icons'
 
 // El menu utiliza el componente Header para mantener siempre la cabecera visible, pero el aside bar para ser responsivo usa un useState y toma el children para acomodarlo dependiendo de la vision misma de la pagina
 
 const navigationBar = [
-  { name: 'Dashboard', route: '/dashboard', icon: <IconDashboard />, current: false },
-  { name: 'Productos', route: '/products', icon: <IconProducts />, current: false },
+  { name: 'Dashboard', route: '/dashboard', icon: <IconDashboard />, current: true },
+  { name: 'Oferta', route: '/offer', icon: <IconProducts />, current: false },
   { name: 'Clientes', route: '/clients', icon: <IconClient />, current: false },
   { name: 'Facturas', route: '/bills', icon: <IconBills />, current: false }
 ]
 
-const navigationProfile = { name: 'Perfil', route: '/profile', icon: <IconProfile />, current: true }
+const navigationProfile = { name: 'Perfil', route: '/profile', icon: <IconProfile />, current: false }
 
 export const Menu = ({ children }) => {
   const [responsiveSideMenu, setResponsiveSideMenu] = useState(true)
@@ -31,8 +31,11 @@ export const Menu = ({ children }) => {
       navigationProfile.current = false
     }
   }
+
   return (
     <>
+      {!localStorage.id &&
+        <Navigate to='/' replace />}
       <Header setResponsiveSideMenu={setResponsiveSideMenu} responsiveSideMenu={responsiveSideMenu} />
       <main className='flex'>
         <div
@@ -65,7 +68,7 @@ export const Menu = ({ children }) => {
             <div className={` m-2 mb-6 border border-slate-200 rounded-xl p-2 flex items-center justify-evenly gap-2 cursor-pointer hover:bg-purple-500 hover:text-white ${navigationProfile.current ? ' bg-purple-500 text-white shadow-sm ' : ' bg-white'}`}>
               <IconProfile />
               <div>
-                <p className='text-sm'>User Name</p>
+                <p className='text-sm'>{localStorage.username}</p>
                 <span className='text-xs'>mail@mail.com</span>
               </div>
               <IconArrow />
