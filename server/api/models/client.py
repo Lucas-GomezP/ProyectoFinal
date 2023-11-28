@@ -11,32 +11,6 @@ class Client():
         self._email = row[7] 
         self._estado = 1                
 
-    def actualizar_datos_cliente(self, **kwargs):
-        for key, value in kwargs.items():
-            if key == "_nombre":
-                self._nombre = value
-            elif key == "_cuitCuil":
-                self._cuitCuil = value
-            elif key == "_apellido":
-                self._apellido = value
-            elif key == "_dni":
-                self._dni = value
-            elif key == "_domicilio":
-                self._domicilio = value
-            elif key == "_telefono":
-                self._telefono = value
-            elif key == "_email":
-                self._email = value
-            elif key == "_estado":
-                self._estado = value
-            else:
-                return {"message: ": f"Atributo '{key}' no existe en la clase Client."}
-            
-    def eliminar_cliente(self):
-        self._estado = 0
-        return self
-
-
     def to_json(self):
         return {
             "id_cliente": self._id_cliente,
