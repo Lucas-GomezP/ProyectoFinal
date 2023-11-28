@@ -8,7 +8,7 @@ const PreguntaFrecuentes = ({ pregunta, respuesta }) => {
       <div className='flex justify-between items-center'>
         <h6 className='text-l font-medium'>{pregunta}</h6>
       </div>
-      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${abierta ? 'max-h-screen' : 'max-h-0'}`}>
+      <div className={`overflow-hidden transition-all ease-in-out ${abierta ? 'max-h-screen' : 'max-h-0'}`}>
         <p className='mt-2 `overflow-hidden transition-all duration-500 ease-in-out'>{respuesta}</p>
       </div>
     </div>
