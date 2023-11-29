@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import { Menu } from '../components/Menu'
 import { useFetch } from '../hooks/useFetch'
-import { IconAdd, IconClose } from '../components/Icons'
+import { IconAdd, IconClose, IconPayments, IconDelete } from '../components/Icons'
 import { Loader } from '../components/Loader'
 import { useEffect, useState } from 'react'
 import { ModalUI } from '../components/ModalUI'
@@ -33,6 +33,20 @@ export const Bills = () => {
     setInsertBill(!insertBill)
   }
 
+  const [detailBill, setDetailBill] = useState(false)
+  const [actualBill, setActualBill] = useState()
+  const handleDetailBill = () => {
+    setDetailBill(!detailBill)
+  }
+
+  const handleActualBill = (bill) => {
+    setActualBill(bill)
+    handleDetailBill()
+  }
+  useEffect(() => {
+    setActualBill()
+    setDetailBill(false)
+  }, [])
   return (
     <>
       <Menu>
@@ -48,42 +62,178 @@ export const Bills = () => {
           ? <Loader />
           : error
             ? <h3 className='text-red-400 font-bold text-center'>No hay facturas cargadas</h3>
-            : <h2>{JSON.stringify(data)}</h2>}
-
+            : <table className='w-full table-auto'>
+              <thead>
+                <tr className=' bg-slate-100 text-slate-500 border-b border-slate-200'>
+                  <th className='p-2'>Nº</th>
+                  <th className='p-2'>Cliente</th>
+                  <th className='p-2 hidden md:table-cell'>CUIT/CUIL</th>
+                  <th className='p-2'>Importe</th>
+                  <th className='p-2'>Estado</th>
+                </tr>
+              </thead>
+              <tbody className='w-full'>
+                {data?.map((bill) => {
+                  const encabezado = bill?.encabezado
+                  return (
+                    <tr
+                      key={encabezado.id_factura}
+                      onClick={() => { handleActualBill(bill) }}
+                      className='h-14 border-b text-sm md:text-base border-slate-200 hover:bg-slate-200 hover:cursor-pointer'
+                    >
+                      <td className='h-14 py-1 text-center'>{encabezado?.id_factura}</td>
+                      <td className='h-14 py-1 text-center'>{encabezado?.nombre_cliente + ' ' + encabezado?.apellido_cliente}</td>
+                      <td className='h-14 py-1 text-center hidden md:table-cell'>{encabezado?.cuit_cuil}</td>
+                      <td className='h-14 py-1 text-center'>${encabezado?.importe_total}</td>
+                      <td className='h-14 py-1 text-center'>{encabezado?.estado}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+              </table>}
+        <DetailBill detailBill={detailBill} handleActualBill={handleActualBill} actualBill={actualBill} />
         <InsertBill insertBill={insertBill} handleInsertBill={handleInsertBill} />
       </Menu>
     </>
   )
 }
 
-const AddOfferBill = ({ actualOffer, register }) => {
+const DetailBill = ({ detailBill, handleActualBill, actualBill }) => {
+  const encabezado = actualBill?.encabezado
+  const detalle = actualBill?.detalle
+
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const handleConfirmDelete = () => {
+    handleActualBill(actualBill)
+    setConfirmDelete(!confirmDelete)
+  }
+
+  const [realicePayment, setRealicePayment] = useState(false)
+  const handleRealicePayment = () => {
+    setRealicePayment(!realicePayment)
+    setPaymentMethod(0)
+  }
+
+  const [paymentMethod, setPaymentMethod] = useState(0)
+  const handlePaymentMethod = (event) => {
+    setSubmitPaymentError(false)
+    setPaymentMethod(event.target.value)
+  }
+
+  const [submitPaymentError, setSubmitPaymentError] = useState(false)
+  const onSubmitPayment = () => {
+    setSubmitPaymentError(false)
+    if (paymentMethod === '0' || paymentMethod === 0) {
+      setSubmitPaymentError(true)
+      return
+    }
+    // ACA HACER EL FETCH
+    console.log(paymentMethod)
+  }
+
   return (
-    <fieldset className='flex gap-4 justify-center items-center'>
-      <label htmlFor={`offername${actualOffer.id_oferta}`} className='font-bold flex flex-col'>Nombre:
-        <input
-          {...register(`offername${actualOffer.id_oferta}`, {
-            required: true
-          })}
-          type='text'
-          value={actualOffer.nombre}
-          id={`offername${actualOffer.id_oferta}`}
-          className='p-1 rounded-md font-normal focus:outline-purple-500'
-        />
-      </label>
-      <label htmlFor={`offerprice${actualOffer.id_oferta}`} className='font-bold flex flex-col'>Precio:
-        <input
-          {...register(`offerprice${actualOffer.id_oferta}`, {
-            required: true
-          })}
-          min={1}
-          value={actualOffer.precio}
-          type='number'
-          id={`offerprice${actualOffer.id_oferta}`}
-          className='p-1 rounded-md font-normal focus:outline-purple-500'
-        />
-      </label>
-      <IconClose className='hover:border hover:border-red-500 hover:text-red-500 rounded-md cursor-pointer' />
-    </fieldset>
+    <>
+      <ModalUI visible={detailBill} setVisible={() => handleActualBill(actualBill)}>
+        <div className='flex flex-col justify-between h-full'>
+          <div className='overflow-auto'>
+            <h2 className='text-2xl font-bold my-2 text-center mb-2'>Detalle Factura <span className='text-purple-500'>Nº {encabezado?.id_factura}</span></h2>
+            <hr />
+            <h3 className='font-bold text-lg text-center'>Emisor de la factura</h3>
+            <p><span className='font-bold'>Nombre: </span>{encabezado?.nombre_usuario}</p>
+            <p><span className='font-bold'>Apellido: </span>{encabezado?.apellido_usuario}</p>
+            <hr />
+            <h3 className='font-bold text-lg text-center'>Cliente</h3>
+            <p><span className='font-bold'>Nombre: </span>{encabezado?.nombre_cliente}</p>
+            <p><span className='font-bold'>Apellido: </span>{encabezado?.apellido_cliente}</p>
+            <p><span className='font-bold'>CUIT/CUIL: </span>{encabezado?.cuit_cuil}</p>
+            <p><span className='font-bold'>Domicilio: </span>{encabezado?.domicilio}</p>
+            <p><span className='font-bold'>Telefono: </span>{encabezado?.telefono}</p>
+            <p><span className='font-bold'>Email: </span>{encabezado?.email}</p>
+            <hr />
+            <h3 className='font-bold text-lg text-center'>Detalle</h3>
+            <div className='flex justify-evenly'>
+              <div className='flex flex-col items-center'>
+                <p className='font-bold'>Fecha de emision:</p>
+                <p>{encabezado?.fecha}</p>
+              </div>
+              <div className='flex flex-col items-center'>
+                <p className='font-bold'>Estado actual:</p>
+                <p>{encabezado?.estado}</p>
+              </div>
+            </div>
+            <table className='w-full table-auto'>
+              <thead>
+                <tr className=' bg-white border-b border-slate-200'>
+                  <th>Nombre</th>
+                  <th>Importe unitario</th>
+                  <th>Cantidad</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {detalle?.map((d, i) => {
+                  return (
+                    <tr key={i} className='border-b text-sm md:text-base border-slate-200'>
+                      <td className='py-1 text-center'>{d.nombre_oferta}</td>
+                      <td className='py-1 text-center'>${d.importe}</td>
+                      <td className='py-1 text-center'>{d.cantidad}</td>
+                      <td className='py-1 text-center'>${d.subtotal}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <hr />
+            <div className='flex justify-between'>
+              <p className='font-bold'>IMPORTE TOTAL</p>
+              <p>${encabezado?.importe_total}</p>
+            </div>
+            <hr />
+            <div className='flex justify-evenly mt-4'>
+              <IconDelete
+                onClick={handleConfirmDelete}
+                className='h-16 w-16 text-red-500 border-2 rounded-md border-red-500 py-1 bg-red-100 hover:text-red-100 hover:border-red-100 hover:bg-red-500 cursor-pointer'
+              />
+              {realicePayment
+                ? <div className='flex flex-col justify-center'>
+                  {submitPaymentError && <small className='text-red-500 text-center'>Seleccione un metodo de pago</small>}
+                  <p>Seleccione un metodo de pago:</p>
+                  <select
+                    onChange={handlePaymentMethod}
+                    className='p-1 rounded-md'
+                  >
+                    <option value='0'>Seleccione metodo</option>
+                    <option value='3'>Efectivo</option>
+                    <option value='4'>Debito</option>
+                    <option value='5'>Cheque</option>
+                  </select>
+                  <div className='flex justify-evenly'>
+                    <button
+                      onClick={handleRealicePayment}
+                      className='p-1 border-2 border-red-500 bg-red-100 text-red-500 hover:border-red-100 hover:bg-red-500 hover:text-red-100 rounded-md cursor-pointer'
+                    >Cancelar
+                    </button>
+                    <button
+                      onClick={onSubmitPayment}
+                      className='p-1 border-2 border-purple-500 bg-purple-100 text-purple-500 hover:border-purple-100 hover:bg-purple-500 hover:text-purple-100 rounded-md cursor-pointer'
+                    >Aceptar
+                    </button>
+                  </div>
+                  </div>
+                : <IconPayments
+                    onClick={handleRealicePayment}
+                    className='h-16 w-16 text-purple-500 border-2 rounded-md border-purple-500 py-1 bg-blue-100 hover:text-purple-100 hover:purple-blue-100 hover:bg-purple-500 cursor-pointer'
+                  />}
+            </div>
+          </div>
+        </div>
+      </ModalUI>
+      <ModalUI visible={confirmDelete} setVisible={handleConfirmDelete}>
+        <h2>delete</h2>
+      </ModalUI>
+    </>
   )
 }
 
