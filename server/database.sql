@@ -21,6 +21,20 @@ CREATE TABLE IF NOT EXISTS usuarios(
     PRIMARY KEY (id_usuario)
 );
 
+/*PARA AGREGAR LOS CAMPOS RESTANTES*/
+ALTER TABLE usuarios
+ADD COLUMN nombre VARCHAR(255) NOT NULL,
+ADD COLUMN apellido VARCHAR(255) NOT NULL,
+ADD COLUMN dni VARCHAR(20) NOT NULL,
+ADD COLUMN domicilio VARCHAR(255) NOT NULL,
+ADD COLUMN telefono VARCHAR(15) NOT NULL,
+ADD COLUMN email VARCHAR(255) NOT NULL;
+
+/*
+ALTER TABLE `db_api_facturacion`.`usuarios` 
+ADD COLUMN `estado` INT(1) NOT NULL DEFAULT 1 AFTER `id_usuario`;
+*/
+
 CREATE TABLE IF NOT EXISTS clientes(
     id_cliente INT(10) NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(255) NOT NULL, 
@@ -117,6 +131,39 @@ INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VAL
 INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('GABY', '1234');
 INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('LUQUITAS', '1234');
 INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('FACU', '1234');
+
+UPDATE usuarios SET nombre = "ALE", apellido = "Grosso", dni = "27708257", domicilio = "Av. Siempreviva 223", telefono = "2915714472", email = "alegrosso@email.com" WHERE id_usuario = 1;
+
+-- Para id_usuario = 2
+UPDATE usuarios SET nombre = "GABY", apellido = "Rodríguez", dni = "27654321", domicilio = "Calle Azul 67", telefono = "3112345678", email = "elenarodriguez@email.com" WHERE id_usuario = 2;
+
+-- Para id_usuario = 3
+UPDATE usuarios SET nombre = "Lucas", apellido = "Gómez", dni = "28901234", domicilio = "Av. Primavera 123", telefono = "3312345678", email = "pablogomez@email.com" WHERE id_usuario = 3;
+
+-- Para id_usuario = 4
+UPDATE usuarios SET nombre = "Marina", apellido = "Hernández", dni = "29876543", domicilio = "Calle Naranja 89", telefono = "3412345678", email = "marinahernandez@email.com" WHERE id_usuario = 4;
+
+-- Para id_usuario = 5
+UPDATE usuarios SET nombre = "Javier", apellido = "López", dni = "30987654", domicilio = "Av. Sol 456", telefono = "3512345678", email = "javierlopez@email.com" WHERE id_usuario = 5;
+
+-- Para id_usuario = 6
+UPDATE usuarios SET nombre = "Lucía", apellido = "Sánchez", dni = "31765432", domicilio = "Calle Luna 78", telefono = "3612345678", email = "luciasanchez@email.com" WHERE id_usuario = 6;
+
+-- Para id_usuario = 7
+UPDATE usuarios SET nombre = "Alejandro", apellido = "Fernández", dni = "32432109", domicilio = "Av. Estrella 234", telefono = "3712345678", email = "alejandrofernandez@email.com" WHERE id_usuario = 7;
+
+-- Para id_usuario = 8
+UPDATE usuarios SET nombre = "Cecilia", apellido = "Torres", dni = "33109876", domicilio = "Calle Arcoiris 56", telefono = "3812345678", email = "ceciliatorres@email.com" WHERE id_usuario = 8;
+
+-- Para id_usuario = 9
+UPDATE usuarios SET nombre = "Martín", apellido = "Díaz", dni = "34210987", domicilio = "Av. Montaña 789", telefono = "3912345678", email = "martindiaz@email.com" WHERE id_usuario = 9;
+
+-- Para id_usuario = 10
+UPDATE usuarios SET nombre = "Camila", apellido = "Ruiz", dni = "35321098", domicilio = "Calle Mar 12", telefono = "4012345678", email = "camilaruiz@email.com" WHERE id_usuario = 10;
+
+-- Para id_usuario = 11
+UPDATE usuarios SET nombre = "Lucas", apellido = "González", dni = "36432109", domicilio = "Av. Playa 34", telefono = "4112345678", email = "lucasgonzalez@email.com" WHERE id_usuario = 11;
+
 -- --------------------------------------------------------------
 INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 1', '1');
 INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 2', '1');
