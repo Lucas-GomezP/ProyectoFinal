@@ -25,7 +25,7 @@ def get_client_by_id(user_id,client_id):
 @user_resources
 def get_all_clients_by_user_id(user_id):
     cur = mysql.connection.cursor()
-    cur.execute('SELECT * FROM clientes WHERE id_usuario = {0}'.format(user_id))
+    cur.execute('SELECT * FROM clientes WHERE estado = 1 AND id_usuario = {0}'.format(user_id))
     data = cur.fetchall()
     clientList = []
     for row in data:
@@ -119,7 +119,7 @@ def update_client(user_id, client_id):
         # Actualiza el cliente en la base de datos
         consulta = 'UPDATE clientes SET nombre = %s, cuit_cuil = %s, apellido = %s, dni = %s, domicilio = %s, telefono = %s, email = %s, estado = %s WHERE id_cliente = %s AND id_usuario = %s'
         valores = (data['nombre'], data['cuitCuil'], data['apellido'], data['dni'], data['domicilio'], 
-                   data['telefono'], data['email'], data['estado'], client_id, user_id)
+                   data['telefono'], data['email'], 1, client_id, user_id)
         cur.execute(consulta, valores)
 
         # Realiza el commit y cierra la conexión
