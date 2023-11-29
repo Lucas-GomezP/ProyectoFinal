@@ -95,11 +95,26 @@ def create_client(user_id):
 @client_resource
 def update_client(user_id, client_id):
     try:
-        # Captura los datos en formato JSON
-        data = request.get_json()        
-        cur = mysql.connection.cursor()      
+        CAMPOS_REQUERIDOS = ['nombre', 'cuitCuil', 'apellido', 'dni', 'domicilio', 'telefono', 'email','estado']
 
-        #Todo: verificar la informacion del json, controlar que esten todos los campos  
+        # Captura los datos en formato JSON
+        data = request.get_json()   
+
+        # comprobamos si se proporcionaron los datos necesarios    
+        if not data or not all(campo in data for campo in CAMPOS_REQUERIDOS):
+            return jsonify({"message": "Datos incompletos"}), 400
+
+        # ----------------------------------------------------------------
+        # Verificar si los valores de cuitCuil, dni y email ya existen en la tabla clientes
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT COUNT(*) FROM clientes WHERE cuitCuil = %s OR dni = %s OR email = %s', (data['cuitCuil'],  data['dni'], data['email']))
+        count = cur.fetchone()[0]             
+        cur = mysql.connection.cursor()      
+        # ---------------------------------------------------------------- esto se puede mover
+
+        # Si alguno de los valores ya existe, abortar la actualización
+        if count > 0:
+            return jsonify({"message": "Al menos uno de los valores ya existe en la tabla clientes"}),500
 
         # Actualiza el cliente en la base de datos
         consulta = 'UPDATE clientes SET nombre = %s, cuit_cuil = %s, apellido = %s, dni = %s, domicilio = %s, telefono = %s, email = %s, estado = %s WHERE id_cliente = %s AND id_usuario = %s'
