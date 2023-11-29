@@ -22,7 +22,7 @@ def get_all_factura_resumen_by_user_id(user_id):
     if (len(fcList) > 0):    
         return jsonify(fcList)
     #-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --    
-    return jsonify({"messaje": "No se encontraron Facturas relacionadas con el usuario"})
+    return jsonify({"message": "No se encontraron Facturas relacionadas con el usuario"})
 
 # retorna la factura id, del usuario solicitado
 @app.route('/user/<int:user_id>/facturas/<int:factura_id>', methods=['GET'])
@@ -74,7 +74,7 @@ def get_factura_by_id(user_id, factura_id):
 def crear_fc(user_id,client_id):
     try:       
         datos = request.get_json() 
-        print(datos)
+        # print(datos)
         new_factura,detalle_new_fc = Factura.create_fc(user_id,client_id,datos)
         print("nueva factura:")
         print(new_factura)

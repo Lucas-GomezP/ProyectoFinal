@@ -6,6 +6,7 @@ import { Loader } from '../components/Loader'
 import { useEffect, useState } from 'react'
 import { ModalUI } from '../components/ModalUI'
 import { useForm } from 'react-hook-form'
+import { API_BASE_URL } from '../routes/apiUrl'
 
 const useObtainBills = () => {
   const endpointAllBills = `user/${localStorage.id}/facturas`
@@ -45,7 +46,7 @@ export const Bills = () => {
 
         {isPending
           ? <Loader />
-          : data?.messaje
+          : data?.message
             ? <h3 className='text-red-400 font-bold text-center'>No hay facturas cargadas</h3>
             : <h2>{JSON.stringify(data)}</h2>}
 
@@ -136,6 +137,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
     const newCount = [...actualCount, 1]
     setActualCount(newCount)
     setSearchOptions([])
+    setBillError(false)
   }
 
   const removeBillItem = (idx) => {
@@ -176,6 +178,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
     } else {
       setSearchClient([])
       setActualClient(client)
+      setClientError(false)
     }
   }
 
@@ -198,11 +201,25 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
     handleInsertBill()
   }
 
+  const [clientError, setClientError] = useState(false)
+  const [billError, setBillError] = useState(false)
   const handleSubmit = () => {
-    // const endpointInsertBill = `user/${localStorage.id}/client/idCliente/factura`<---------------
+    setClientError(false)
+    if (!actualClient) {
+      setClientError(true)
+      return
+    }
+    setBillError(false)
+
+    if (currentBill.length === 0) {
+      setBillError(true)
+      return
+    }
+    const endpointInsertBill = `user/${localStorage.id}/client/${actualClient.id_cliente}/facturas`
     const detalle_fc = []
     for (let i = 0; i < currentBill.length; i++) {
       const id_oferta = currentBill[i].id_oferta
+      const importe = parseFloat(currentBill[i].precio)
       // Cantidad va a ser igual a 0 en caso de que sea un servicio
       let cantidad
       if (currentBill[i].tipo === 'P') {
@@ -210,175 +227,192 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
       } else {
         cantidad = 1
       }
-      detalle_fc.push({ id_oferta, cantidad })
+      detalle_fc.push({ id_oferta, cantidad, importe })
     }
     const body = {
-      encabezado: {
-        id_usuario: localStorage.id,
-        id_cliente: actualClient.id_cliente
-      },
-      detalle_fc
+      // eslint-disable-next-line object-shorthand
+      detalle_fc: detalle_fc
     }
 
     console.log(body)
-    // const requestOptions = {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'x-access-token': localStorage.token,
-    //     'user-id': localStorage.id
-    //   },
-    //   body: JSON.stringify(data)
-    // }
-    // fetch(API_BASE_URL + endpointInsertOffer, requestOptions)
-    //   .then(res => {
-    //     if (!res.ok) throw new Error('Error HTTP: ' + res.status)
-    //     return res.json
-    //   })
-    //   .then(res => {
-    //     console.log(res)
-    //     setNameInsert(data.nombre)
-    //     handleInsertOffer()
-    //     handleSuccesInsert()
-    //   })
-    //   .catch(error => console.log(error + error.message))
+    const requestOptions = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.token,
+        'user-id': localStorage.id
+      },
+      body: JSON.stringify(data)
+    }
+    fetch(API_BASE_URL + endpointInsertBill, requestOptions)
+      .then(res => {
+        if (!res.ok) throw new Error('Error HTTP: ' + res.status)
+        return res.json
+      })
+      .then(res => {
+        console.log(res)
+        cancelBill()
+        handleSuccesInsert()
+      })
+      .catch(error => console.log(error + error.message))
   }
-
+  const [insertSucces, setInsertSucces] = useState(false)
+  const handleSuccesInsert = () => {
+    setInsertSucces(!insertSucces)
+  }
   return (
-    <ModalUI visible={insertBill} setVisible={handleInsertBill}>
-      <h2 className='text-xl font-bold my-2 text-center mb-2'>Crear Factura</h2>
-      {isPending
-        ? <Loader />
-        : <fieldset className='h-12 flex items-center justify-center gap-2 p-2 rounded-md relative'>
-          <label htmlFor='search' className='font-bold flex flex-col relative w-full'>Agregar producto/servicio:
-            <input
-              onKeyUp={handleSearchOptions}
-              placeholder='Ingrese el nombre a buscar'
-              type='text'
-              className='p-1 rounded-md font-normal focus:outline-purple-500'
-            />
-          </label>
-          {searchOptions.length > 0 &&
-            <ul className='bg-white border border-slate-300 rounded-md w-full p-1 absolute overflow-y-auto max-h-96 top-12 z-20'>
-              {searchOptions?.map(option => {
-                return (
-                  <li
-                    key={option.id_oferta}
-                    onClick={() => { addCountOffer(option) }}
-                    className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >{option.nombre}
-                  </li>
-                )
-              })}
-            </ul>}
-        </fieldset>}
+    <>
+      <ModalUI visible={insertBill} setVisible={handleInsertBill}>
+        <h2 className='text-xl font-bold my-2 text-center mb-2'>Crear Factura</h2>
+        {isPending
+          ? <Loader />
+          : <fieldset className='h-12 flex items-center justify-center gap-2 p-2 rounded-md relative'>
+            <label htmlFor='search' className='font-bold flex flex-col relative w-full'>Agregar producto/servicio:
+              <input
+                onKeyUp={handleSearchOptions}
+                placeholder='Ingrese el nombre a buscar'
+                type='text'
+                className='p-1 rounded-md font-normal focus:outline-purple-500'
+              />
+            </label>
+            {searchOptions.length > 0 &&
+              <ul className='bg-white border border-slate-300 rounded-md w-full p-1 absolute overflow-y-auto max-h-96 top-12 z-20'>
+                {searchOptions?.map(option => {
+                  return (
+                    <li
+                      key={option.id_oferta}
+                      onClick={() => { addCountOffer(option) }}
+                      className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
+                    >{option.nombre}
+                    </li>
+                  )
+                })}
+              </ul>}
+          </fieldset>}
 
-      {isPendingClient
-        ? <Loader />
-        : <div className='flex justify-between items-center p-4 relative'>
-          <p className='font-bold text-lg'>Cliente:</p>
-          <input
-            onClick={() => handleSearchClient({ show: true })}
-            onChange={() => true}
-            type='text'
-            placeholder='Ingrese el cliente'
-            value={actualClient ? actualClient.nombre : ''}
-            className='p-1 rounded-md font-normal focus:outline-purple-500 relative w-52 cursor-pointer'
-          />
-          {searchClient.length > 0 &&
-            <ul className='bg-white border border-slate-300 rounded-md right-4 p-1 absolute overflow-y-auto max-h-96 top-12 w-52'>
-              {searchClient?.map(client => {
-                return (
-                  <li
-                    key={client.id_cliente}
-                    onClick={() => { handleSearchClient({ show: false, client }) }}
-                    className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
-                  >{client.nombre}
-                  </li>
-                )
-              })}
-            </ul>}
-        </div>}
+        {isPendingClient
+          ? <Loader />
+          : <div className='flex justify-between items-center p-4 relative'>
+            <p className='font-bold text-lg'>Cliente:</p>
+            <div>
+              {clientError && <small className='text-red-500 mr-2'>Seleccione un cliente</small>}
+              <input
+                onClick={() => handleSearchClient({ show: true })}
+                onChange={() => true}
+                type='text'
+                placeholder='Ingrese el cliente'
+                value={actualClient ? actualClient.nombre : ''}
+                className='p-1 rounded-md font-normal focus:outline-purple-500 relative w-52 cursor-pointer'
+              />
+              {searchClient.length > 0 &&
+                <ul className='bg-white border border-slate-300 rounded-md right-4 p-1 absolute overflow-y-auto max-h-96 top-12 w-52'>
+                  {searchClient?.map(client => {
+                    return (
+                      <li
+                        key={client.id_cliente}
+                        onClick={() => { handleSearchClient({ show: false, client }) }}
+                        className='hover:bg-slate-200 cursor-pointer p-1 rounded-md'
+                      >{client.nombre}
+                      </li>
+                    )
+                  })}
+                </ul>}
+            </div>
+          </div>}
 
-      <table className='table-auto w-full p-4'>
-        <thead>
-          <tr>
-            <th>Borrar</th>
-            <th>Nombre</th>
-            <th>Tipo</th>
-            <th>Cantidad</th>
-            <th>Precio</th>
-            <th>SubTotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentBill.map(offer => {
-            return (
-              <tr key={offer.id_oferta}>
-                <td className='text-center flex justify-center'>
-                  <IconClose
-                    onClick={() => removeBillItem(currentBill.indexOf(offer))}
-                    className='text-red-500 border border-red-500 rounded-md hover:bg-red-300 cursor-pointer'
-                  />
-                </td>
-                <td className='text-center'>{offer.nombre}</td>
-                <td className='text-center'>{offer.tipo}</td>
-                <td className='text-center'>
-                  <input
-                    onChange={(event) => handleCount(event, currentBill.indexOf(offer))}
-                    value={actualCount[currentBill.indexOf(offer)]}
-                    type='number'
-                    min={1}
-                    max={offer.stock}
-                    className='w-16'
-                  />
-                </td>
-                <td className='text-center'>${offer.precio}</td>
-                <td className='text-center'>${parseInt(offer.precio) * actualCount[currentBill.indexOf(offer)]}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+        <table className='table-auto w-full p-4'>
+          <thead>
+            <tr>
+              <th>Borrar</th>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>SubTotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentBill.map(offer => {
+              return (
+                <tr key={offer.id_oferta}>
+                  <td className='text-center flex justify-center'>
+                    <IconClose
+                      onClick={() => removeBillItem(currentBill.indexOf(offer))}
+                      className='text-red-500 border border-red-500 rounded-md hover:bg-red-300 cursor-pointer'
+                    />
+                  </td>
+                  <td className='text-center'>{offer.nombre}</td>
+                  <td className='text-center'>{offer.tipo}</td>
+                  <td className='text-center'>
+                    <input
+                      onChange={(event) => handleCount(event, currentBill.indexOf(offer))}
+                      value={actualCount[currentBill.indexOf(offer)]}
+                      type='number'
+                      min={1}
+                      max={offer.tipo === 'P' ? offer.stock : 1}
+                      className='w-16'
+                    />
+                  </td>
+                  <td className='text-center'>${offer.precio}</td>
+                  <td className='text-center'>${parseInt(offer.precio) * actualCount[currentBill.indexOf(offer)]}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+        <div className='flex justify-center'>
+          {billError && <small className='text-red-500 text-center'>Cargue al menos un producto y/o servicio</small>}
+        </div>
+        <hr />
 
-      <hr />
+        <div className='flex justify-between'>
+          <p className='font-bold'>Importe final:</p>
+          <p className='pr-4'>${totalPrice}</p>
+        </div>
 
-      <div className='flex justify-between'>
-        <p className='font-bold'>Importe final:</p>
-        <p className='pr-4'>${totalPrice}</p>
-      </div>
-
-      <div className='flex justify-evenly items-center p-4'>
-        <button
-          type='submit'
-          onClick={cancelBill}
-          className=' p-2 rounded-md w-min self-center font-bold text-xl text-red-500 bg-red-100 border-2 border-red-500 hover:bg-red-500 hover:border-red-100 hover:text-red-100'
-        >Cancelar
-        </button>
-        <button
-          onClick={() => setConfirmBill(!confirmBill)}
-          type='submit'
-          className={` p-2 rounded-md w-min self-center font-bold text-xl text-purple-500 bg-purple-100 border-2 border-purple-500 hover:bg-purple-500 hover:border-purple-100 hover:text-purple-100 ${confirmBill ? ' hidden' : ''}`}
-        >Crear
-        </button>
-        <div className={`flex flex-col justify-center ${confirmBill ? '' : ' hidden'}`}>
-          <p>¿Seguro que desea cargar esta factura?</p>
-          <div className='flex justify-evenly'>
-            <button
-              onClick={() => setConfirmBill(!confirmBill)}
-              type='submit'
-              className=' p-2 rounded-md w-min self-center font-bold text-xl text-red-500 bg-red-100 border-2 border-red-500 hover:bg-red-500 hover:border-red-100 hover:text-red-100'
-            >No
-            </button>
-            <button
-              onClick={handleSubmit}
-              type='submit'
-              className=' p-2 rounded-md w-min self-center font-bold text-xl text-purple-500 bg-purple-100 border-2 border-purple-500 hover:bg-purple-500 hover:border-purple-100 hover:text-purple-100'
-            >Si
-            </button>
+        <div className='flex justify-evenly items-center p-4'>
+          <button
+            type='submit'
+            onClick={cancelBill}
+            className=' p-2 rounded-md w-min self-center font-bold text-xl text-red-500 bg-red-100 border-2 border-red-500 hover:bg-red-500 hover:border-red-100 hover:text-red-100'
+          >Cancelar
+          </button>
+          <button
+            onClick={() => setConfirmBill(!confirmBill)}
+            type='submit'
+            className={` p-2 rounded-md w-min self-center font-bold text-xl text-purple-500 bg-purple-100 border-2 border-purple-500 hover:bg-purple-500 hover:border-purple-100 hover:text-purple-100 ${confirmBill ? ' hidden' : ''}`}
+          >Crear
+          </button>
+          <div className={`flex flex-col justify-center ${confirmBill ? '' : ' hidden'}`}>
+            <p>¿Seguro que desea cargar esta factura?</p>
+            <div className='flex justify-evenly'>
+              <button
+                onClick={() => setConfirmBill(!confirmBill)}
+                type='submit'
+                className=' p-2 rounded-md w-min self-center font-bold text-xl text-red-500 bg-red-100 border-2 border-red-500 hover:bg-red-500 hover:border-red-100 hover:text-red-100'
+              >No
+              </button>
+              <button
+                onClick={handleSubmit}
+                type='submit'
+                className=' p-2 rounded-md w-min self-center font-bold text-xl text-purple-500 bg-purple-100 border-2 border-purple-500 hover:bg-purple-500 hover:border-purple-100 hover:text-purple-100'
+              >Si
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </ModalUI>
+      </ModalUI>
+      <ModalUI visible={insertSucces} setVisible={handleSuccesInsert}>
+        <div className='flex flex-col h-full justify-evenly'>
+          <h2 className='text-2xl text-purple-500 font-bold my-2 text-center mb-2'>Carga exitosa!</h2>
+          <button
+            onClick={handleSuccesInsert}
+            type='button'
+            className=' p-2 rounded-md w-min self-center font-bold text-xl text-purple-500 bg-purple-100 border-2 border-purple-500 hover:bg-purple-500 hover:border-purple-100 hover:text-purple-100'
+          >Cerrar
+          </button>
+        </div>
+      </ModalUI>
+    </>
   )
 }
