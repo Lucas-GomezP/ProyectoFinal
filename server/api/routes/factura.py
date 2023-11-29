@@ -40,6 +40,7 @@ def get_factura_by_id(user_id, factura_id):
 def crear_fc(user_id,client_id):
     try:       
         datos = request.get_json()         
+        print('datos', datos)
         new_factura = Factura.create_fc(user_id,client_id,datos)
 
         return jsonify(new_factura),201        

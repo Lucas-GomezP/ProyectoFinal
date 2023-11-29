@@ -5,7 +5,7 @@ import { IconAdd, IconClose } from '../components/Icons'
 import { Loader } from '../components/Loader'
 import { useEffect, useState } from 'react'
 import { ModalUI } from '../components/ModalUI'
-import { useForm } from 'react-hook-form'
+// import { useForm } from 'react-hook-form'
 import { API_BASE_URL } from '../routes/apiUrl'
 
 const useObtainBills = () => {
@@ -26,7 +26,7 @@ const useObtainBills = () => {
 }
 
 export const Bills = () => {
-  const { data, isPending } = useObtainBills()
+  const { data, isPending, error } = useObtainBills()
   const [insertBill, setInsertBill] = useState(false)
 
   const handleInsertBill = () => {
@@ -46,7 +46,7 @@ export const Bills = () => {
 
         {isPending
           ? <Loader />
-          : data?.message
+          : error
             ? <h3 className='text-red-400 font-bold text-center'>No hay facturas cargadas</h3>
             : <h2>{JSON.stringify(data)}</h2>}
 
@@ -219,7 +219,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
     const detalle_fc = []
     for (let i = 0; i < currentBill.length; i++) {
       const id_oferta = currentBill[i].id_oferta
-      const importe = parseFloat(currentBill[i].precio)
+      // const importe = parseFloat(currentBill[i].precio)
       // Cantidad va a ser igual a 0 en caso de que sea un servicio
       let cantidad
       if (currentBill[i].tipo === 'P') {
@@ -227,14 +227,13 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
       } else {
         cantidad = 1
       }
-      detalle_fc.push({ id_oferta, cantidad, importe })
+      detalle_fc.push({ id_oferta, cantidad })
     }
     const body = {
       // eslint-disable-next-line object-shorthand
       detalle_fc: detalle_fc
     }
 
-    console.log(body)
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -242,7 +241,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
         'x-access-token': localStorage.token,
         'user-id': localStorage.id
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(body)
     }
     fetch(API_BASE_URL + endpointInsertBill, requestOptions)
       .then(res => {

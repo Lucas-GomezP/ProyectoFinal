@@ -112,13 +112,12 @@ class Factura():
     def create_fc(user_id,client_id,data_fc):
         print("Creaando fc...")
         # Verificamos si 'data_fc' está vacío o no es un diccionario
-        if not data_fc or not isinstance(data_fc, dict):
+        if not data_fc: #or not isinstance(data_fc, dict)
             raise ValueError("El JSON recibido está vacío o no es un diccionario")       
-
+        
         # Verificamos si 'data_fc' contiene las clave 'detalle_fc'
         if 'detalle_fc' not in data_fc:            
             raise ValueError("El JSON no contiene las seccion 'detalle_fc'")
-
         # Obtenemos 'detalle_fc' del JSON recibido        
         data_detalle = data_fc["detalle_fc"]
                 
