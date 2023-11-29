@@ -112,42 +112,43 @@ class Factura():
     def create_fc(user_id,client_id,data_fc):
         print("Creaando fc...")
         # Verificamos si 'data_fc' está vacío o no es un diccionario
-        if not data_fc:# or not isinstance(data_fc, dict):
+        if not data_fc or not isinstance(data_fc, dict):
             raise ValueError("El JSON recibido está vacío o no es un diccionario")       
 
-        # Verificamos si 'data_fc' contiene las claves 'encabezado' y 'detalle_fc'
+        # Verificamos si 'data_fc' contiene las clave 'detalle_fc'
         if 'detalle_fc' not in data_fc:            
             raise ValueError("El JSON no contiene las seccion 'detalle_fc'")
 
-        # Obtenemos 'encabezado' y 'detalle_fc' del JSON recibido
-        #data_encabezado, data_detalle = data_fc["encabezado"], data_fc["detalle_fc"]
+        # Obtenemos 'detalle_fc' del JSON recibido        
         data_detalle = data_fc["detalle_fc"]
-        # verificamos los datos                
-        #if Factura.check_data_schema(data_encabezado):# and ElementoDetalleFactura.check_data_schema(user_id,data_detalle):   
+                
         nueva_info_fc = None          
-        if ElementoDetalleFactura.check_data_schema(user_id,data_detalle): 
-            
+        # verificamos los datos                
+        if ElementoDetalleFactura.check_data_schema(user_id,data_detalle):             
             info_registro_fc = Factura.armar_info_registro_fc(user_id,client_id)            
-            result_insert, msj, id = Factura.insert_registro_fc(info_registro_fc, user_id,client_id)                                
-            if result_insert:  
-                print(msj)                                
-                # preparamos la información del encabezado que voy a enviar al frontend  
-                                  
-                nueva_info_fc = {'id_factura': id}
+            result_insert, msj, ultimo_id = Factura.insert_registro_fc(info_registro_fc, user_id,client_id)                                
+            if result_insert: 
+                #---------------------------------------------------------------- 
+                print(msj)                                                                  
+                nueva_info_fc = {'id_factura': ultimo_id}
                 # agregamos el resto de la información al encabezado
-                nueva_info_fc.update(info_registro_fc)              
+                nueva_info_fc.update(info_registro_fc)     
+                #----------------------------------------------------------------         
                 # procedemos a insertar el detalle de la factura en la tabla correspondiente  y calculamos el total de la factura
-                detalle,total_fc = ElementoDetalleFactura.insertar_detalle(id, data_detalle)
+                detalle,total_fc = ElementoDetalleFactura.insertar_detalle(ultimo_id, data_detalle)
                 # con el valor calculado procedemos a actualizar el registro correspondiente a la factura creada
-                Factura.update_total_fc(total_fc,id)
+                Factura.update_total_fc(total_fc,ultimo_id)
+                #----------------------------------------------------------------
                 # actualizamos el valor calculado para retornar al frontend
-                nueva_info_fc['importe_total']=total_fc                
+                nueva_info_fc['importe_total']=total_fc     
+                #----------------------------------------------------------------           
                 # actualizamos el stock de la tabla oferta                
                 for elemento in detalle:
                     if not Factura.update_stock_oferta(elemento[2], elemento[4]):
                         print("error al actualizar el stock")
-                        return 'Error al actualizar stock'                
-                return nueva_info_fc,detalle                
+                        return 'Error al actualizar stock'  
+                fc_nueva = Factura.get_facturas(user_id, ultimo_id)              
+                return fc_nueva               
             raise DBError("Error al insertar datos", nueva_info_fc)
         raise TypeError("Error tipos")
         
@@ -177,7 +178,79 @@ class Factura():
             print("Oferta no encontrada")
         cur.close()
         return False
- 
+    
+    @staticmethod
+    def get_facturas(user_id, factura_id=0):
+        cur = mysql.connection.cursor()
+        query = '''
+            SELECT f.id_factura, f.id_usuario, u.nombre, u.apellido,
+            f.id_cliente, cl.nombre, cl.apellido, cl.cuit_cuil, cl.domicilio, cl.telefono, cl.email,
+            f.fecha, f.importe_total, f.estado, df.id_oferta, o.nombre, df.importe, df.cantidad, round(df.importe * df.cantidad, 2) as subtotal
+            FROM facturas f
+            INNER JOIN detalle_facturas df ON df.id_factura = f.id_factura
+            INNER JOIN oferta o ON o.id_oferta = df.id_oferta
+            INNER JOIN usuarios u ON u.id_usuario = f.id_usuario
+            INNER JOIN clientes cl ON cl.id_cliente = f.id_cliente
+            WHERE f.id_usuario = %s
+        '''
+        if factura_id:
+            query += ' AND f.id_factura = %s'
+            cur.execute(query, (user_id, factura_id))
+        else:
+            cur.execute(query, (user_id,))
+
+        
+        data = cur.fetchall()        
+        cur.close()
+
+        facturas_list = Factura.generar_lista_facturas(data)
+
+        return facturas_list
+    
+    @staticmethod
+    def generar_lista_facturas(data):
+        facturas_dict = {}
+
+        for row in data:
+            id_factura = row[0]
+
+            if id_factura not in facturas_dict:
+                # Información de encabezado para una nueva factura
+                facturas_dict[id_factura] = {
+                    "encabezado": {
+                        "id_factura": row[0],
+                        "id_usuario": row[1],
+                        "nombre_usuario": row[2],
+                        "apellido_usuario": row[3],
+                        "id_cliente": row[4],
+                        "nombre_cliente": row[5],
+                        "apellido_cliente": row[6],
+                        "cuit_cuil": row[7],
+                        "domicilio": row[8],
+                        "telefono": row[9],
+                        "email": row[10],
+                        "fecha": str(row[11]),
+                        "importe_total": row[12],
+                        "estado":row[13]
+                    },
+                    "detalle": []  # Detalles para esta factura
+                }
+
+            # Detalle para la factura actual
+            detalle = {
+                "id_oferta": row[-5],
+                "nombre_oferta": row[-4],
+                "importe": row[-3],
+                "cantidad": row[-2],
+                "subtotal": row[-1]
+            }
+
+            # Agrega el detalle a la lista correspondiente a la factura actual
+            facturas_dict[id_factura]["detalle"].append(detalle)
+
+        # Convertir el diccionario a una lista de facturas
+        facturas_list = [{"encabezado": v["encabezado"], "detalle": v["detalle"]} for v in facturas_dict.values()]
+        return facturas_list
     
 class ElementoDetalleFactura:
     schema = {        
