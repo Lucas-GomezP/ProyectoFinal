@@ -174,27 +174,27 @@ INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CL
 /*PARA AGREGAR CAMPOS*/
 UPDATE clientes
 SET cuit_cuil = '12345678901', apellido = 'Apellido 1', dni = '98765463', domicilio = 'Calle 1',
-    telefono = '555-1234', email = 'nuevo@email.com' WHERE id_cliente = 1;
+    telefono = '5551234', email = 'nuevo@email.com' WHERE id_cliente = 1;
 
 UPDATE clientes
 SET cuit_cuil = '12345678902',  apellido = 'Apellido 2', dni = '98765555', domicilio = 'Calle 2',
-    telefono = '432-1234', email = 'cualquiera@email.com' WHERE id_cliente = 2;
+    telefono = '4321234', email = 'cualquiera@email.com' WHERE id_cliente = 2;
 
 UPDATE clientes
 SET cuit_cuil = '12345678905', apellido = 'Apellido 3', dni = '98765432', domicilio = 'Calle 3',
-    telefono = '268-1234', email = 'blablabla@email.com' WHERE id_cliente = 3;
+    telefono = '2681234', email = 'blablabla@email.com' WHERE id_cliente = 3;
 
 UPDATE clientes
 SET cuit_cuil = '12345675248', apellido = 'Apellido 4', dni = '98765222', domicilio = 'Calle 4',
-    telefono = '566-1234', email = 'unica@email.com' WHERE id_cliente = 4;
+    telefono = '5661234', email = 'unica@email.com' WHERE id_cliente = 4;
 
 UPDATE clientes
 SET cuit_cuil = '12345679875', apellido = 'Apellido 5', dni = '98765123', domicilio = 'Calle 5',
-    telefono = '123-1234', email = 'a@email.com' WHERE id_cliente = 5;
+    telefono = '1231234', email = 'a@email.com' WHERE id_cliente = 5;
 
 UPDATE clientes
 SET cuit_cuil = '12345675197', apellido = 'Apellido 6', dni = '98765785', domicilio = 'Calle 6',
-    telefono = '456-1234', email = 'unica@email.com' WHERE id_cliente = 6;
+    telefono = '4561234', email = 'unica@email.com' WHERE id_cliente = 6;
 
 
 -- --------------------------------------------------------------
