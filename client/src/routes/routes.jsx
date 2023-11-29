@@ -1,15 +1,20 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { HomeProv } from '../pages/HomeProv'
+import { Login } from '../pages/Login'
 import { Dashboard } from '../pages/Dashboard'
 import { Offer } from '../pages/Offer'
 import { Clients } from '../pages/Clients'
 import { Bills } from '../pages/Bills'
 import { Profile } from '../pages/Profile'
+import { Landing } from '../pages/Landing'
 
 export const routes = createBrowserRouter([
   {
     path: '/',
-    element: <HomeProv />
+    element: <Landing />
+  },
+  {
+    path: '/login',
+    element: <Login />
   },
   {
     path: '/dashboard',
