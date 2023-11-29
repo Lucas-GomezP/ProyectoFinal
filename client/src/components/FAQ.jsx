@@ -18,6 +18,7 @@ const PreguntaFrecuentes = ({ pregunta, respuesta }) => {
 export const PreguntasFrecuentes = () => {
   return (
     <aside className='p-2.5'>
+      <h2 className='text-xl font-semibold md:text-3xl p-4 text-center '>Preguntas frecuentes</h2>
       {preguntasFrecuentes.map((faq) => (
         <PreguntaFrecuentes key={faq.id} {...faq} />
       ))}

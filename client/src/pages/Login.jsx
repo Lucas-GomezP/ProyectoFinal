@@ -2,7 +2,8 @@ import { useForm } from 'react-hook-form'
 import { API_BASE_URL, ENDPOINTS } from '../routes/apiUrl'
 import { useContext } from 'react'
 import { UserContext } from '../context/user'
-import { Navigate } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
+import { IconClose } from '../components/Icons'
 
 export const Login = () => {
   // LLamamos el hook y obtenemos las funcionalidades que necesitamos
@@ -33,6 +34,7 @@ export const Login = () => {
       {user &&
         <Navigate to='/dashboard' replace />}
       <div className='bg-[#A855F7]/90 backdrop-blur-[1px] h-screen w-screen flex flex-col justify-center items-center'>
+        <Link to='/'><IconClose className='absolute top-0 right-0 text-white pt-2 pr-2 text-3xl hover:brightness-150' /></Link>
         <div className='flex flex-col justify-center items-center p-[3vw] bg-[#A855F7] border rounded-xl border-opacity-[25] outline-white'>
           <img src='./logo.svg' alt='logo FacturIZI' className='max-h-14 mb-[2vh]' />
           <h1 className='font-bold text-2xl mb-5 text-white'>Log in</h1>

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import logo from '../../public/logo.svg'
 export const NavBar = () => {
   return (
@@ -7,7 +8,7 @@ export const NavBar = () => {
         <h1 className='font-semibold text-xl'>FacturIZI</h1>
       </section>
       <section className='flex items-center gap-x-5 justify-end'>
-        <a href='' className='border rounded p-2 hover:bg-[#a855f7] flex items-center hover:text-[#ffed00]'>Login</a>
+        <Link to='/login' className='border rounded p-2 hover:bg-[#a855f7] flex items-center hover:text-[#ffed00]'>Login</Link>
       </section>
     </nav>
   )
