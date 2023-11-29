@@ -36,9 +36,6 @@ def get_factura_by_id(user_id, factura_id):
     cur.execute('SELECT * FROM facturas WHERE id_usuario = %s AND id_factura = %s', (user_id, factura_id))
     data = cur.fetchall()
 
-    # ToDo borrar luego
-    print(data)
-
     if cur.rowcount > 0:
         objFactura = Factura(data[0])
 
@@ -87,17 +84,7 @@ def crear_fc(user_id,client_id):
 @user_resources
 def desactivar_fc(user_id, factura_id):    
     try:
-        # Comprobamos si la oferta pertenece al usuario
-        # cur = mysql.connection.cursor()
-        # cur.execute('SELECT * FROM facturas WHERE id_oferta = %s AND id_usuario = %s AND estado = "A"', (factura_id, user_id))
-        # oferta = cur.fetchone()
-        # cur.close()
-
-        # if not oferta:
-        #     return jsonify({"message": "Oferta no encontrada"}), 404
-
-        #print("borrando oferta: ",oferta)
-        # Cambiamos el estado de la oferta a anulado ('2')
+        
         cur = mysql.connection.cursor()
         query = 'UPDATE facturas SET estado = %s WHERE id_factura = %s and id_usuario = %s'
         cur.execute(query, ('2', factura_id,user_id))
@@ -111,44 +98,4 @@ def desactivar_fc(user_id, factura_id):
             return jsonify({"message": "No se encontró la factura o no se realizó ningún cambio", "success": False}), 404
     except mysql.connector.Error as e:
         return jsonify({"message": f"Error en la base de datos: {e}", "success": False}), 500
-    
-"""        
-@app.route('/user/<int:user_id>/oferta/<int:oferta_id>', methods=['PUT'])
-@token_required
-@user_resources
-@oferta_resource
-def update_oferta(user_id, oferta_id):
-    try:
-        # campos que pueden ser actualizados
-        CAMPOS_ACTUALIZABLES = ['nombre', 'tipo', 'descripcion', 'precio', 'stock', 'disponibilidad','id_usuario','estado']
-        TIPO_OFERTA = ['P','S']
-
-        # datos json
-        datos = request.get_json() 
-        
-        # comprobamos si se proporcionaron los datos necesarios    
-        if not datos or not all(campo in datos for campo in CAMPOS_ACTUALIZABLES):
-            return jsonify({"message": "Datos incompletos"}), 400
-
-        # extraemos la información de los campos
-        info_campos = {campo: datos[campo] for campo in CAMPOS_ACTUALIZABLES}
-        
-        # verificamos si el tipo es válido
-        if info_campos['tipo'] not in TIPO_OFERTA:
-            return jsonify({"message": "Tipo de oferta incorrecto"}), 400
-
-        # armamos la query para la actualización en la base de datos
-        cur = mysql.connection.cursor()
-        consulta = 'UPDATE oferta SET {} WHERE id_oferta = %s AND id_usuario = %s'.format(
-            ', '.join([f"{campo} = %s" for campo in info_campos.keys()])
-        )
-        valores = list(info_campos.values()) + [oferta_id, user_id]
-        cur.execute(consulta, valores)
-        mysql.connection.commit()
-        cur.close()
-
-        return jsonify({"message": "Actualización exitosa"}), 200
-
-    except mysql.connector.Error as e:
-        return jsonify({"message": f"Error en la base de datos: {e}"}), 500
-        """
+ 
