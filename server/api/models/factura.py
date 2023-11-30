@@ -229,7 +229,7 @@ class Factura():
         query = '''
             SELECT f.id_factura, f.id_usuario, u.nombre, u.apellido,
             f.id_cliente, cl.nombre, cl.apellido, cl.cuit_cuil, cl.domicilio, cl.telefono, cl.email,
-            f.fecha, f.importe_total, f.estado, df.id_oferta, o.nombre, df.importe, df.cantidad, round(df.importe * df.cantidad, 2) as subtotal
+            f.fecha, f.importe_total, f.estado, df.id_oferta, o.nombre, df.importe, df.cantidad, round(df.importe * df.cantidad, 2) as subtotal, o.tipo
             FROM facturas f
             INNER JOIN detalle_facturas df ON df.id_factura = f.id_factura
             INNER JOIN oferta o ON o.id_oferta = df.id_oferta
@@ -282,11 +282,13 @@ class Factura():
 
             # Detalle para la factura actual
             detalle = {
-                "id_oferta": row[-5],
-                "nombre_oferta": row[-4],
-                "importe": row[-3],
-                "cantidad": row[-2],
-                "subtotal": row[-1]
+                
+                "id_oferta": row[-6],
+                "nombre_oferta": row[-5],
+                "importe": row[-4],
+                "cantidad": row[-3],
+                "subtotal": row[-2],
+                "tipo": row[-1]
             }
 
             # Agrega el detalle a la lista correspondiente a la factura actual

@@ -165,6 +165,7 @@ const DetailBill = ({ detailBill, handleActualBill, actualBill }) => {
               <thead>
                 <tr className=' bg-white border-b border-slate-200'>
                   <th>Nombre</th>
+                  <th>Tipo</th>
                   <th>Importe unitario</th>
                   <th>Cantidad</th>
                   <th>Subtotal</th>
@@ -175,6 +176,7 @@ const DetailBill = ({ detailBill, handleActualBill, actualBill }) => {
                   return (
                     <tr key={i} className='border-b text-sm md:text-base border-slate-200'>
                       <td className='py-1 text-center'>{d.nombre_oferta}</td>
+                      <td className='py-1 text-center'>{d.tipo}</td>
                       <td className='py-1 text-center'>${d.importe}</td>
                       <td className='py-1 text-center'>{d.cantidad}</td>
                       <td className='py-1 text-center'>${d.subtotal}</td>
@@ -369,8 +371,6 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
     const detalle_fc = []
     for (let i = 0; i < currentBill.length; i++) {
       const id_oferta = currentBill[i].id_oferta
-      // const importe = parseFloat(currentBill[i].precio)
-      // Cantidad va a ser igual a 0 en caso de que sea un servicio
       let cantidad
       if (currentBill[i].tipo === 'P') {
         cantidad = actualCount[i]
@@ -402,6 +402,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
         console.log(res)
         cancelBill()
         handleSuccesInsert()
+        window.location.reload()
       })
       .catch(error => console.log(error + error.message))
   }
