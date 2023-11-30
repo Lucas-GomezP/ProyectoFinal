@@ -22,7 +22,7 @@ export const useShowingData = ({ data }) => {
   const handleSetCurrentPage = (page) => { setCurrentPageData(page) }
 
   useEffect(() => {
-    if (!data) return
+    if (!Array.isArray(data)) return
 
     const endData = 10 * currentPageData
     const startData = endData - 10
