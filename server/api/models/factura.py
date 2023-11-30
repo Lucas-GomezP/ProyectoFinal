@@ -151,6 +151,25 @@ class Factura():
                 return fc_nueva               
             raise DBError("Error al insertar datos", nueva_info_fc)
         raise TypeError("Error tipos")
+    
+    def cobrar_factura(user_id,factura_id,data_fc):
+        print("cobrando fc")
+        # Verificamos si 'data_fc' está vacío o no es un diccionario
+        if not data_fc or not isinstance(data_fc, dict):
+            raise ValueError("El JSON recibido está vacío o no es un diccionario")       
+
+        # Verificamos si 'data_fc' contiene las clave 'detalle_fc'
+        if 'forma_pago' not in data_fc:            
+            raise ValueError("El JSON no contiene las seccion 'detalle_fc'")
+
+        # Obtenemos 'detalle_fc' del JSON recibido        
+        forma_de_pago = data_fc["forma_pago"]
+        result,msj,codigo = Factura.actualizar_cobro(user_id,factura_id,forma_de_pago)
+
+        if result:
+            fc = Factura.get_facturas(user_id, factura_id)              
+            return fc, msj,codigo        
+        return result,msj,codigo
         
     @staticmethod
     def update_stock_oferta(id_oferta, cantidad_vendida):
@@ -178,6 +197,38 @@ class Factura():
             print("Oferta no encontrada")
         cur.close()
         return False
+    @staticmethod
+    def actualizar_cobro(user_id,factura_id,forma_de_pago):
+        print("update cobro")        
+        # ----------------------------------------------------------------
+        if forma_de_pago not in [3,4,5]:# todo reemplazar por constantes
+            msj_error = "Forma de pago invalida"
+            codigo = 400
+            return False,msj_error,codigo
+        print("aca",(forma_de_pago,user_id,factura_id,1))
+
+
+        cur = mysql.connection.cursor()
+        query = "UPDATE facturas SET estado = %s WHERE id_usuario = %s AND id_factura = %s AND estado = %s "
+        pendiente_de_pago = 1
+        # sql_query = cur.mogrify(query, (forma_de_pago, user_id, factura_id, pendiente_de_pago))
+        # print("-->",sql_query)  # Esto imprimirá la consulta SQL generada con los valores proporciona
+
+        esta_en_condiciones = cur.execute(query, (forma_de_pago,user_id,factura_id,pendiente_de_pago))# todo reemplazar por constantes por ahora solo cuando este en 1
+        
+        
+        #count = cur.fetchone()[0] 
+        mysql.connection.commit()
+        cur.close()
+        print(esta_en_condiciones, type(esta_en_condiciones))
+
+        if esta_en_condiciones > 0:        
+            codigo =201   
+            msj = "Registro exitoso."
+            return True, msj,codigo
+        codigo = 403
+        msj_error = "No se pudo realizar registracion de cobro. Verifique el estado FC."
+        return False,msj_error,codigo
     
     @staticmethod
     def get_facturas(user_id, factura_id=0):
