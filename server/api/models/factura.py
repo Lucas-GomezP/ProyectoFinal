@@ -112,13 +112,12 @@ class Factura():
     def create_fc(user_id,client_id,data_fc):
         print("Creaando fc...")
         # Verificamos si 'data_fc' está vacío o no es un diccionario
-        if not data_fc or not isinstance(data_fc, dict):
+        if not data_fc: #or not isinstance(data_fc, dict)
             raise ValueError("El JSON recibido está vacío o no es un diccionario")       
-
+        
         # Verificamos si 'data_fc' contiene las clave 'detalle_fc'
         if 'detalle_fc' not in data_fc:            
             raise ValueError("El JSON no contiene las seccion 'detalle_fc'")
-
         # Obtenemos 'detalle_fc' del JSON recibido        
         data_detalle = data_fc["detalle_fc"]
                 
@@ -314,7 +313,7 @@ class ElementoDetalleFactura:
         # Verificamos si la lista de elementos está vacía
         if not elementos:
             return False, "Lista vacía"  # Retornamos False y mensaje de lista vacía
-        print("lista de elementos", elementos)
+        # print("lista de elementos", elementos)
         try:            
             with mysql.connection.cursor() as cursor:            
                 # Iteramos sobre la lista
@@ -335,6 +334,7 @@ class ElementoDetalleFactura:
                         if type(elemento[key]) != ElementoDetalleFactura.schema[key]:                                
                             return False, f"Tipo incorrecto para '{key}' en el elemento"  # Retornamos False y mensaje de tipo incorrecto
                     
+                        
                         # Consultamos que cada elemento tenga stock / servicio disponible
                         query = """
                             SELECT 
@@ -353,6 +353,7 @@ class ElementoDetalleFactura:
                                 
                         """
                         # Ejecutamos la consulta con los parámetros correspondientes
+                        
                         cursor.execute(query, (
                             user_id,
                             elemento["id_oferta"],
@@ -362,10 +363,11 @@ class ElementoDetalleFactura:
                         ))                        
                         # Obtenemos el resultado de la consulta
                         result = cursor.fetchone()                        
-
                         # Verificamos si el resultado es mayor a 0
                         if result[0] <= 0:                            
                             return False, "No hay disponibilidad o el producto no pertenece al usuario"
+        except Exception as e:
+            print(e)
 
         finally:
             cursor.close()
@@ -409,7 +411,8 @@ class ElementoDetalleFactura:
         
         valores_detalle = []
         try:
-            for detalle in datos_detalle:                
+            for detalle in datos_detalle:   
+                print('detalle: ',detalle)             
                 query = """
                             SELECT 
                                 precio

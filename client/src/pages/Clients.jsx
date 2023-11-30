@@ -181,6 +181,7 @@ const DetailClient = ({ detailClient, handleDetailClient, client }) => {
       },
       body: JSON.stringify(data)
     }
+    console.log(data)
     fetch(API_BASE_URL + endpointUpdateClient, requestOptions)
       .then(res => {
         if (!res.ok) throw new Error('Error HTTP: ' + res.status)
