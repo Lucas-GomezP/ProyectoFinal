@@ -6,6 +6,7 @@ import { Clients } from '../pages/Clients'
 import { Bills } from '../pages/Bills'
 import { Profile } from '../pages/Profile'
 import { Landing } from '../pages/Landing'
+import { ErrorPage } from '../pages/404'
 
 export const routes = createBrowserRouter([
   {
@@ -35,5 +36,9 @@ export const routes = createBrowserRouter([
   {
     path: '/profile',
     element: <Profile />
+  },
+  {
+    path: '*',
+    element: <ErrorPage />
   }
 ])
