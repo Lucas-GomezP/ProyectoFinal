@@ -3,5 +3,6 @@
 export const API_BASE_URL = 'http://localhost:4500/'
 
 export const ENDPOINTS = {
-  login: 'login'
+  login: 'login',
+  signIn: 'users'
 }
