@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-closing-tag-location */
+/* eslint-disable react/jsx-indent */
 /* eslint-disable camelcase */
 import { Menu } from '../components/Menu'
 import { useFetch } from '../hooks/useFetch'
@@ -79,7 +81,7 @@ export const Bills = () => {
                     <tr
                       key={encabezado.id_factura}
                       onClick={() => { handleActualBill(bill) }}
-                      className='h-14 border-b text-sm md:text-base border-slate-200 hover:bg-slate-200 hover:cursor-pointer'
+                      className={`h-14 border-b text-sm md:text-base border-slate-200 hover:bg-slate-200 hover:cursor-pointer ${encabezado.estado === 1 ? ' bg-yellow-200 ' : ' bg-green-200'}`}
                     >
                       <td className='h-14 py-1 text-center'>{encabezado?.id_factura}</td>
                       <td className='h-14 py-1 text-center'>{encabezado?.nombre_cliente + ' ' + encabezado?.apellido_cliente}</td>
@@ -128,8 +130,63 @@ const DetailBill = ({ detailBill, handleActualBill, actualBill }) => {
       return
     }
     // ACA HACER EL FETCH
-    console.log(paymentMethod)
+    console.log(actualBill)
+    const endpointPayBill = `user/${localStorage.id}/facturas/${encabezado.id_factura}`
+
+    const requestOptions = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.token,
+        'user-id': localStorage.id
+      },
+      body: JSON.stringify({ forma_pago: paymentMethod })
+    }
+    fetch(API_BASE_URL + endpointPayBill, requestOptions)
+      .then(res => {
+        if (!res.ok) throw new Error('Error HTTP: ' + res.status)
+        return res.json
+      })
+      .then(res => {
+        window.location.reload()
+      })
+      .catch(error => console.log(error))
   }
+
+  const deleteBill = () => {
+    const endpointDeleteBill = `user/${localStorage.id}/facturas/${encabezado.id_factura}`
+
+    const requestOptions = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': localStorage.token,
+        'user-id': localStorage.id
+      }
+    }
+    fetch(API_BASE_URL + endpointDeleteBill, requestOptions)
+      .then(res => {
+        if (!res.ok) throw new Error('Error HTTP: ' + res.status)
+        return res.json
+      })
+      .then(res => {
+        window.location.reload()
+      })
+      .catch(error => console.log(error))
+  }
+
+  const [actualState, setActualState] = useState()
+  useEffect(() => {
+    if (encabezado?.estado === 1) {
+      setActualState('Sin Pagar')
+    } else if (encabezado?.estado === 3) {
+      setActualState('Pagado (Efectivo)')
+    } else if (encabezado?.estado === 4) {
+      setActualState('Pagado (Debito)')
+    } else if (encabezado?.estado === 5) {
+      setActualState('Pagado (Cheque)')
+    }
+  }, [encabezado?.estado, actualBill])
 
   return (
     <>
@@ -158,13 +215,14 @@ const DetailBill = ({ detailBill, handleActualBill, actualBill }) => {
               </div>
               <div className='flex flex-col items-center'>
                 <p className='font-bold'>Estado actual:</p>
-                <p>{encabezado?.estado}</p>
+                <p>{actualState}</p>
               </div>
             </div>
             <table className='w-full table-auto'>
               <thead>
                 <tr className=' bg-white border-b border-slate-200'>
                   <th>Nombre</th>
+                  <th>Tipo</th>
                   <th>Importe unitario</th>
                   <th>Cantidad</th>
                   <th>Subtotal</th>
@@ -175,6 +233,7 @@ const DetailBill = ({ detailBill, handleActualBill, actualBill }) => {
                   return (
                     <tr key={i} className='border-b text-sm md:text-base border-slate-200'>
                       <td className='py-1 text-center'>{d.nombre_oferta}</td>
+                      <td className='py-1 text-center'>{d.tipo}</td>
                       <td className='py-1 text-center'>${d.importe}</td>
                       <td className='py-1 text-center'>{d.cantidad}</td>
                       <td className='py-1 text-center'>${d.subtotal}</td>
@@ -222,16 +281,32 @@ const DetailBill = ({ detailBill, handleActualBill, actualBill }) => {
                     </button>
                   </div>
                   </div>
-                : <IconPayments
-                    onClick={handleRealicePayment}
-                    className='h-16 w-16 text-purple-500 border-2 rounded-md border-purple-500 py-1 bg-blue-100 hover:text-purple-100 hover:purple-blue-100 hover:bg-purple-500 cursor-pointer'
-                  />}
+                : actualState === 'Sin Pagar'
+                  ? <IconPayments
+                      onClick={handleRealicePayment}
+                      className='h-16 w-16 text-purple-500 border-2 rounded-md border-purple-500 py-1 bg-blue-100 hover:text-purple-100 hover:purple-blue-100 hover:bg-purple-500 cursor-pointer'
+                    />
+                  : <p className='text-purple-500 text-lg font-bold'>Factura ya pagada</p>}
             </div>
           </div>
         </div>
       </ModalUI>
       <ModalUI visible={confirmDelete} setVisible={handleConfirmDelete}>
-        <h2>delete</h2>
+        <div className='flex flex-col h-full justify-evenly'>
+          <h2 className='text-2xl text-center'>Seguro que desea <span className='text-red-500 font-bold'>ELIMINAR</span> la factura <span className='text-purple-500 font-bold'>Nº {encabezado?.id_factura}</span>?</h2>
+          <div className='flex justify-evenly'>
+            <button
+              className='text-2xl w-1/3 text-red-500 border-2 border-red-500 rounded-md bg-red-100 cursor-pointer hover:text-red-100 hover:border-red-100 hover:bg-red-500'
+              onClick={deleteBill}
+            >Si
+            </button>
+            <button
+              className='text-2xl w-1/3 text-purple-500 border-2 border-purple-500 rounded-md bg-purple-100 cursor-pointer hover:text-purple-100 hover:border-purple-100 hover:bg-purple-500'
+              onClick={handleConfirmDelete}
+            >No
+            </button>
+          </div>
+        </div>
       </ModalUI>
     </>
   )
@@ -369,8 +444,6 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
     const detalle_fc = []
     for (let i = 0; i < currentBill.length; i++) {
       const id_oferta = currentBill[i].id_oferta
-      // const importe = parseFloat(currentBill[i].precio)
-      // Cantidad va a ser igual a 0 en caso de que sea un servicio
       let cantidad
       if (currentBill[i].tipo === 'P') {
         cantidad = actualCount[i]
@@ -402,6 +475,7 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
         console.log(res)
         cancelBill()
         handleSuccesInsert()
+        window.location.reload()
       })
       .catch(error => console.log(error + error.message))
   }

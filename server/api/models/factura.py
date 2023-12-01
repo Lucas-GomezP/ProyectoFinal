@@ -150,6 +150,25 @@ class Factura():
                 return fc_nueva               
             raise DBError("Error al insertar datos", nueva_info_fc)
         raise TypeError("Error tipos")
+    
+    def cobrar_factura(user_id,factura_id,data_fc):
+        print("cobrando fc")
+        # Verificamos si 'data_fc' está vacío o no es un diccionario
+        if not data_fc or not isinstance(data_fc, dict):
+            raise ValueError("El JSON recibido está vacío o no es un diccionario")       
+
+        # Verificamos si 'data_fc' contiene las clave 'detalle_fc'
+        if 'forma_pago' not in data_fc:            
+            raise ValueError("El JSON no contiene las seccion 'detalle_fc'")
+
+        # Obtenemos 'detalle_fc' del JSON recibido        
+        forma_de_pago = data_fc["forma_pago"]
+        result,msj,codigo = Factura.actualizar_cobro(user_id,factura_id,forma_de_pago)
+
+        if result:
+            fc = Factura.get_facturas(user_id, factura_id)              
+            return fc, msj,codigo        
+        return result,msj,codigo
         
     @staticmethod
     def update_stock_oferta(id_oferta, cantidad_vendida):
@@ -177,6 +196,32 @@ class Factura():
             print("Oferta no encontrada")
         cur.close()
         return False
+    @staticmethod
+    def actualizar_cobro(user_id,factura_id,forma_de_pago):
+        print("update cobro")        
+        # ----------------------------------------------------------------
+        if int(forma_de_pago) not in [3,4,5]:# todo reemplazar por constantes
+            msj_error = "Forma de pago invalida"
+            codigo = 400
+            return False,msj_error,codigo
+        print("aca",(forma_de_pago,user_id,factura_id,1))
+
+
+        cur = mysql.connection.cursor()
+        query = "UPDATE facturas SET estado = %s WHERE id_usuario = %s AND id_factura = %s AND estado = %s "
+        pendiente_de_pago = 1
+        esta_en_condiciones = cur.execute(query, (forma_de_pago,user_id,factura_id,pendiente_de_pago))# todo reemplazar por constantes por ahora solo cuando este en 1
+
+        mysql.connection.commit()
+        cur.close()       
+
+        if esta_en_condiciones > 0:        
+            codigo =201   
+            msj = "Registro exitoso."
+            return True, msj,codigo
+        codigo = 403
+        msj_error = "No se pudo realizar registracion de cobro. Verifique el estado FC."
+        return False,msj_error,codigo
     
     @staticmethod
     def get_facturas(user_id, factura_id=0):
@@ -184,13 +229,13 @@ class Factura():
         query = '''
             SELECT f.id_factura, f.id_usuario, u.nombre, u.apellido,
             f.id_cliente, cl.nombre, cl.apellido, cl.cuit_cuil, cl.domicilio, cl.telefono, cl.email,
-            f.fecha, f.importe_total, f.estado, df.id_oferta, o.nombre, df.importe, df.cantidad, round(df.importe * df.cantidad, 2) as subtotal
+            f.fecha, f.importe_total, f.estado, df.id_oferta, o.nombre, df.importe, df.cantidad, round(df.importe * df.cantidad, 2) as subtotal, o.tipo
             FROM facturas f
             INNER JOIN detalle_facturas df ON df.id_factura = f.id_factura
             INNER JOIN oferta o ON o.id_oferta = df.id_oferta
             INNER JOIN usuarios u ON u.id_usuario = f.id_usuario
             INNER JOIN clientes cl ON cl.id_cliente = f.id_cliente
-            WHERE f.id_usuario = %s
+            WHERE f.id_usuario = %s AND f.estado != 2
         '''
         if factura_id:
             query += ' AND f.id_factura = %s'
@@ -237,11 +282,13 @@ class Factura():
 
             # Detalle para la factura actual
             detalle = {
-                "id_oferta": row[-5],
-                "nombre_oferta": row[-4],
-                "importe": row[-3],
-                "cantidad": row[-2],
-                "subtotal": row[-1]
+                
+                "id_oferta": row[-6],
+                "nombre_oferta": row[-5],
+                "importe": row[-4],
+                "cantidad": row[-3],
+                "subtotal": row[-2],
+                "tipo": row[-1]
             }
 
             # Agrega el detalle a la lista correspondiente a la factura actual

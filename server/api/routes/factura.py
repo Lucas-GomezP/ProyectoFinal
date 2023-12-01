@@ -67,4 +67,21 @@ def desactivar_fc(user_id, factura_id):
             return jsonify({"message": "No se encontró la factura o no se realizó ningún cambio", "success": False}), 404
     except mysql.connector.Error as e:
         return jsonify({"message": f"Error en la base de datos: {e}", "success": False}), 500
+    
+# Cambia el estado de factura a 3: efectivo 4: debito 5: cheque, solo se podra cambiar a estos estado y debera estar en estado 1
+@app.route('/user/<int:user_id>/facturas/<int:factura_id>', methods=['PUT'])
+@token_required
+@user_resources
+@factura_resource
+def cobrar_fc(user_id,factura_id):
+    try:       
+        datos = request.get_json()         
+        print(datos)
+        fc_cobrada,msj,codigo = Factura.cobrar_factura(user_id,factura_id,datos)
+        if fc_cobrada:
+            return jsonify(fc_cobrada),codigo        
+        return jsonify({"message": msj}), codigo
+        
+    except Exception as e:        
+        return jsonify({"message": f"Error en la base de datos: {e}"}), 500
  
