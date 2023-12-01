@@ -17,7 +17,7 @@ def get_client_by_id(user_id,client_id):
     if cur.rowcount > 0:
         objClient = Client(data[0])
         return jsonify( objClient.to_json() )
-    return jsonify( {"message": "id not ale editado found"} ), 404
+    return jsonify( {"message": "id not found"} ), 404
 
 # retorna todos los clientes del usuario solicitado
 @app.route('/user/<int:user_id>/client', methods = ['GET'])
