@@ -5,8 +5,11 @@ import cash from '../../public/cash.png'
 import { Footer } from '../components/Footer'
 import { PreguntasFrecuentes } from '../components/FAQ'
 import { Link } from 'react-router-dom'
+import { useContext } from 'react'
+import { LoginContext } from '../context/isLogin'
 
 export function Landing () {
+  const { isLogin } = useContext(LoginContext)
   return (
     <main>
       <NavBar />
@@ -28,7 +31,7 @@ export function Landing () {
           <figcaption className='text-sm md:text-base text-center text-[#7894c5] font-bold border-b-2 hover:border-[#a855f7]'>Los mejores precios</figcaption>
         </figure>
       </section>
-      <Link className='flex justify-center text-white hover:bg-[#fff] hover:text-black border-solid border border-black rounded-lg p-1.5 w-1/4 bg-[#a855f7] m-auto mt-3' to='/login'>Empezar</Link>
+      <Link className='flex justify-center text-white hover:bg-[#fff] hover:text-black border-solid border border-black rounded-lg p-1.5 w-1/4 bg-[#a855f7] m-auto mt-3' to={isLogin ? '/dashboard' : '/login'}>Empezar</Link>
       <PreguntasFrecuentes />
       <Footer />
     </main>

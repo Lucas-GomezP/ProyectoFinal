@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { UserContext } from '../context/user'
 import { Link, Navigate } from 'react-router-dom'
 import { IconClose } from '../components/Icons'
+import toast from 'react-hot-toast'
 
 export const Login = () => {
   // LLamamos el hook y obtenemos las funcionalidades que necesitamos
@@ -17,16 +18,21 @@ export const Login = () => {
         Authorization: 'Basic ' + btoa(data.username + ':' + data.password)
       }
     }
-
-    fetch(API_BASE_URL + ENDPOINTS.login, requestOptions)
-      .then(res => res.json())
-      .then(data => {
-        localStorage.clear()
-        localStorage.setItem('id', data.id)
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('username', data.username)
-        handleUser()
-      })
+    try {
+      fetch(API_BASE_URL + ENDPOINTS.login, requestOptions)
+        .then(res => res.json())
+        .then(data => {
+          localStorage.clear()
+          localStorage.setItem('id', data.id)
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('username', data.username)
+          handleUser()
+          toast.success('Inicio de sesion exitoso')
+        })
+    } catch (error) {
+      console.error(error)
+      toast.error('Error')
+    }
   })
 
   return (
@@ -37,7 +43,7 @@ export const Login = () => {
         <Link to='/'><IconClose className='absolute top-0 right-0 text-white pt-2 pr-2 text-3xl hover:brightness-150' /></Link>
         <div className='flex flex-col justify-center items-center p-[3vw] bg-[#A855F7] border rounded-xl border-opacity-[25] outline-white'>
           <img src='./logo.svg' alt='logo FacturIZI' className='max-h-14 mb-[2vh]' />
-          <h1 className='font-bold text-2xl mb-5 text-white'>Log in</h1>
+          <h1 className='font-bold text-2xl mb-5 text-white'>Iniciar Sesion</h1>
           <form
             onSubmit={onSubmit}
             className='flex flex-col gap-4 '

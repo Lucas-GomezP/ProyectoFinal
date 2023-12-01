@@ -7,6 +7,7 @@ import { Bills } from '../pages/Bills'
 import { Profile } from '../pages/Profile'
 import { Landing } from '../pages/Landing'
 import { ErrorPage } from '../pages/404'
+import { SignIn } from '../pages/SignIn'
 
 export const routes = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ export const routes = createBrowserRouter([
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path: '/signIn',
+    element: <SignIn />
   },
   {
     path: '/dashboard',
