@@ -76,6 +76,7 @@ def desactivar_fc(user_id, factura_id):
 def cobrar_fc(user_id,factura_id):
     try:       
         datos = request.get_json()         
+        print(datos)
         fc_cobrada,msj,codigo = Factura.cobrar_factura(user_id,factura_id,datos)
         if fc_cobrada:
             return jsonify(fc_cobrada),codigo        

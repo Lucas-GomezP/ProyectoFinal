@@ -200,7 +200,7 @@ class Factura():
     def actualizar_cobro(user_id,factura_id,forma_de_pago):
         print("update cobro")        
         # ----------------------------------------------------------------
-        if forma_de_pago not in [3,4,5]:# todo reemplazar por constantes
+        if int(forma_de_pago) not in [3,4,5]:# todo reemplazar por constantes
             msj_error = "Forma de pago invalida"
             codigo = 400
             return False,msj_error,codigo
@@ -235,7 +235,7 @@ class Factura():
             INNER JOIN oferta o ON o.id_oferta = df.id_oferta
             INNER JOIN usuarios u ON u.id_usuario = f.id_usuario
             INNER JOIN clientes cl ON cl.id_cliente = f.id_cliente
-            WHERE f.id_usuario = %s
+            WHERE f.id_usuario = %s AND f.estado != 2
         '''
         if factura_id:
             query += ' AND f.id_factura = %s'
