@@ -22,7 +22,7 @@ def login():
     row = cur.fetchone()
 
     if not row:
-       return jsonify({"message": "No autorizado"}), 401  
+       return jsonify({"message": "Error en el nombre de usuario y/o contraseña"}), 401  
     
     """ El usuario existe en la BD y coincide su contraseña """
     print("print row[0]",row[0])
