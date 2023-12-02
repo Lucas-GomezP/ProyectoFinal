@@ -50,19 +50,19 @@ def create_user():
         cur = mysql.connection.cursor()
         cur = mysql.connection.cursor()
         data = request.get_json()
- 
+        message = "Error al registrarse"
 
         # Se verifica si el usuario ya existe
         cur.execute("SELECT * FROM usuarios WHERE nombreusuario = %s", (data['nombreusuario'],))
         usuario_existente = cur.fetchone()
 
         if usuario_existente:
-            return {"message: ": "El usuario ya existe."}, 400     
+            return {message: "El usuario ya existe."}, 400     
         
         CAMPOS_REQUERIDOS = ['nombreusuario', 'contrasenia', 'nombre', 'apellido', 'dni', 'telefono', 'email']
         # Se comprueban que los campos estén completos
         if not data or not all(campo in data for campo in CAMPOS_REQUERIDOS):
-            return jsonify({"message": "Datos incompletos"}), 400
+            return jsonify({message: "Datos incompletos"}), 400
 
         # Insertar nuevo usuario
         cur.execute("INSERT INTO usuarios (nombreusuario, contrasenia, nombre, apellido, dni, telefono, email) VALUES (%s, %s, %s, %s, %s, %s, %s)", 
@@ -71,7 +71,7 @@ def create_user():
         
         mysql.connection.commit()        
         cur.close()
-        return {"message: ": "Usuario creado exitosamente"}, 201
+        return {message: "Usuario creado exitosamente"}, 201
     
     except Exception as e:
         return str(e), 500 #Error interno del servidor
