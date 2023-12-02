@@ -33,6 +33,7 @@ export function Landing () {
         </figure>
       </section>
       <Link className='flex justify-center text-white hover:bg-[#fff] hover:text-black border-solid border border-black rounded-lg p-1.5 w-1/4 bg-[#a855f7] m-auto mt-3' to={isLogin ? '/dashboard' : '/login'}>Empezar</Link>
+      <Link className='flex justify-center text-white hover:bg-[#fff] hover:text-black border-solid border border-black rounded-lg p-1.5 w-1/4 bg-[#a855f7] m-auto mt-3' to='/apidoc'>Doc. API</Link>
       <PreguntasFrecuentes />
       <Footer />
     </main>

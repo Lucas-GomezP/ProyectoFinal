@@ -1,7 +1,7 @@
 from api import app
 from api.models.user import User
 from flask import request, jsonify
-#from api.utils import token_required, client_resource, user_resources
+from api.utils import token_required, client_resource, user_resources
 from api.db.db import mysql
 import jwt
 import datetime
@@ -78,6 +78,8 @@ def create_user():
     
 
 @app.route('/users/<int:user_id>', methods=['PUT'])
+@token_required
+@user_resources
 def update_user(user_id):
     try:
         cur = mysql.connection.cursor()
@@ -101,6 +103,8 @@ def update_user(user_id):
     
     
 @app.route('/users/<int:user_id>', methods=['DELETE'])
+@token_required
+@user_resources
 def delete_user(user_id):
     try:
         cur = mysql.connection.cursor()

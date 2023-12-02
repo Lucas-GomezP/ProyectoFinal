@@ -147,7 +147,6 @@ const DetailClient = ({ detailClient, handleDetailClient, client }) => {
         'user-id': localStorage.id
       }
     }
-    console.log(endpointDeleteClient, requestOptions)
     fetch(API_BASE_URL + endpointDeleteClient, requestOptions)
       .then(res => {
         if (!res.ok) throw new Error('Error HTTP: ' + res.status)
@@ -181,7 +180,6 @@ const DetailClient = ({ detailClient, handleDetailClient, client }) => {
       },
       body: JSON.stringify(data)
     }
-    console.log(data)
     fetch(API_BASE_URL + endpointUpdateClient, requestOptions)
       .then(res => {
         if (!res.ok) throw new Error('Error HTTP: ' + res.status)
@@ -359,7 +357,6 @@ const InsertClient = ({ insertClient, handleInsertClient }) => {
 
   const onSubmitInsert = handleSubmit((data) => {
     const endpointInsertClient = `user/${localStorage.id}/client`
-    console.log(data)
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -375,7 +372,6 @@ const InsertClient = ({ insertClient, handleInsertClient }) => {
         return res.json
       })
       .then(res => {
-        console.log(res)
         setNameInsert(data.nombre)
         handleInsertClient()
         handleSuccesInsert()

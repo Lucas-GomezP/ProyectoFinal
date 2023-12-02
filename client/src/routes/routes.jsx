@@ -8,6 +8,7 @@ import { Profile } from '../pages/Profile'
 import { Landing } from '../pages/Landing'
 import { ErrorPage } from '../pages/404'
 import { SignIn } from '../pages/SignIn'
+import { ApiDoc } from '../pages/ApiDoc'
 
 export const routes = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ export const routes = createBrowserRouter([
   {
     path: '/profile',
     element: <Profile />
+  },
+  {
+    path: '/apidoc',
+    element: <ApiDoc />
   },
   {
     path: '*',

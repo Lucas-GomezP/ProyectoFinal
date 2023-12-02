@@ -62,8 +62,6 @@ const useObtainOffer = () => {
 export const Dashboard = () => {
   const { data: dataBill, isPending: isPendingBill } = useObtainBills()
   const { data: dataOffer, isPending: isPendingOffer } = useObtainOffer()
-  // console.log(dataBill)
-  // console.log(isPendingBill)
 
   return (
     <>
@@ -298,6 +296,7 @@ const ControlStock = ({ data }) => {
   const handleMinStock = (event) => {
     setMinStock(event.target.value)
   }
+
   return (
     <>
       <h2 className='text-purple-500 text-xl font-bold text-center'>Control de stock</h2>
@@ -319,20 +318,22 @@ const ControlStock = ({ data }) => {
             <th className='p-2'>Stock</th>
           </tr>
         </thead>
-        <tbody>
+        {data?.messaje
+          ? <p className='text-red-500 font-bold text-center'>No hay productos y/o servicios con ese stock minimo</p>
+          : <tbody>
           {data?.map(d => {
             if (d.stock <= minStock) {
               return (
-                <tr key={d.id_oferta} className='border-b'>
-                  <td className='text-center'>{d.nombre}</td>
-                  <td className='text-center'>{d.tipo}</td>
-                  <td className='text-center'>{d.stock}</td>
-                </tr>
+               <tr key={d.id_oferta} className='border-b'>
+                 <td className='text-center'>{d.nombre}</td>
+                 <td className='text-center'>{d.tipo}</td>
+                 <td className='text-center'>{d.stock}</td>
+               </tr>
               )
             }
             return null
           })}
-        </tbody>
+            </tbody>}
       </table>
     </>
   )
@@ -364,13 +365,13 @@ const ChartTypeIncome = ({ dataBill }) => {
       }
     ]
   }
-  console.log(dataBill)
   return (
     <>
       <div className='max-h-96 flex flex-col justify-center items-center'>
         <hr className='w-full' />
         <h2 className='text-purple-500 text-xl font-bold'>Tipo de ingreso por compra</h2>
-        <Pie data={dataPie} />
+        {dataBill ? <Pie data={dataPie} /> : <p className='text-red-500 font-bold text-center'>No hay facturas pagas aun para realizar el calculo</p>}
+
       </div>
     </>
   )

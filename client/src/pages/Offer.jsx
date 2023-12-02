@@ -318,7 +318,6 @@ const DetailProduct = ({ detailProduct, handleDetailProduct, productInfo }) => {
       })
       .then(res => {
         window.location.reload()
-        console.log(data)
       })
       .catch(error => console.log(error))
   })
@@ -545,7 +544,6 @@ const InsertOffer = ({ insertOffer, handleInsertOffer }) => {
         return res.json
       })
       .then(res => {
-        console.log(res)
         setNameInsert(data.nombre)
         handleInsertOffer()
         handleSuccesInsert()

@@ -129,8 +129,6 @@ const DetailBill = ({ detailBill, handleActualBill, actualBill }) => {
       setSubmitPaymentError(true)
       return
     }
-    // ACA HACER EL FETCH
-    console.log(actualBill)
     const endpointPayBill = `user/${localStorage.id}/facturas/${encabezado.id_factura}`
 
     const requestOptions = {
@@ -456,7 +454,6 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
       // eslint-disable-next-line object-shorthand
       detalle_fc: detalle_fc
     }
-
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -472,7 +469,6 @@ const InsertBill = ({ insertBill, handleInsertBill }) => {
         return res.json
       })
       .then(res => {
-        console.log(res)
         cancelBill()
         handleSuccesInsert()
         window.location.reload()
