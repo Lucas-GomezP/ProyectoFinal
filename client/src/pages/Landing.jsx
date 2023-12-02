@@ -9,6 +9,7 @@ import { useContext } from 'react'
 import { LoginContext } from '../context/isLogin'
 
 export function Landing () {
+  // Se trae el contexto de Login para poder manejar a donde redirige el boton "empezar"
   const { isLogin } = useContext(LoginContext)
   return (
     <main>

@@ -2,6 +2,7 @@ import { IconMenu } from './Icons'
 import logo from '../../public/logo.svg'
 
 export const Header = ({ setResponsiveSideMenu, responsiveSideMenu }) => {
+  // Se realiza una relocalizacion utlizando el metodo location para poder refrescar los componentes
   const ReturnHome = () => {
     window.location.href = window.location.origin
   }

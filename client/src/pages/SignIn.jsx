@@ -12,6 +12,7 @@ export const SignIn = () => {
   const { register, handleSubmit } = useForm()
   const { user } = useContext(UserContext)
   const onSubmit = handleSubmit((data) => {
+    // Se configura la peticion que se le hace al back para poder crear un nuevo usuario
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -31,7 +32,6 @@ export const SignIn = () => {
       fetch(API_BASE_URL + ENDPOINTS.signIn, requestOptions)
         .then(res => res.json())
         .then(data => {
-          console.log('usuario creado', data)
           toast.success('registro exitoso')
           return navigate('/')
         })

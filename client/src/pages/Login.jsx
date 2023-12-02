@@ -10,7 +10,7 @@ export const Login = () => {
   // LLamamos el hook y obtenemos las funcionalidades que necesitamos
   const { register, handleSubmit } = useForm()
   const { user, handleUser } = useContext(UserContext)
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -19,19 +19,21 @@ export const Login = () => {
       }
     }
     try {
-      fetch(API_BASE_URL + ENDPOINTS.login, requestOptions)
-        .then(res => res.json())
-        .then(data => {
-          localStorage.clear()
-          localStorage.setItem('id', data.id)
-          localStorage.setItem('token', data.token)
-          localStorage.setItem('username', data.username)
-          handleUser()
-          toast.success('Inicio de sesion exitoso')
-        })
+      const response = await fetch(API_BASE_URL + ENDPOINTS.login, requestOptions)
+      if (!response.ok) {
+        // Si la respuesta no es exitosa se lanza un error
+        throw new Error('Error en la autenticacion')
+      }
+      const responseData = await response.json()
+      localStorage.clear()
+      localStorage.setItem('id', responseData.id)
+      localStorage.setItem('token', responseData.token)
+      localStorage.setItem('username', responseData.username)
+      handleUser()
+      toast.success('Inicio de sesion exitoso')
     } catch (error) {
       console.error(error)
-      toast.error('Error')
+      toast.error('Error en el nombre del usuario y/o contraseña')
     }
   })
 

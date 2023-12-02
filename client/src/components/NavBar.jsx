@@ -4,6 +4,7 @@ import { useContext } from 'react'
 import { LoginContext } from '../context/isLogin'
 
 export const NavBar = () => {
+  // Se trae al contexto Login para poder manejar las debidas rutas de cerrar sesion, iniciarla y registrarse
   const { isLogin, handleLogin } = useContext(LoginContext)
 
   const LogOut = () => {
@@ -22,7 +23,7 @@ export const NavBar = () => {
         )}
         {!isLogin && (
           <>
-            <Link to='/signIn' onClick={() => console.log(isLogin)} className='border rounded p-1 text-xs sm:p-2 hover:bg-[#a855f7] flex items-center hover:text-[#ffed00]'>Registrarse</Link>
+            <Link to='/signIn' className='border rounded p-1 text-xs sm:p-2 hover:bg-[#a855f7] flex items-center hover:text-[#ffed00]'>Registrarse</Link>
             <Link to='/login' className='border rounded p-1 text-xs sm:p-2 hover:bg-[#a855f7] flex items-center hover:text-[#ffed00]'>Iniciar sesion</Link>
           </>
         )}

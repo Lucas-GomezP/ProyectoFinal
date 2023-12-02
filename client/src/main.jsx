@@ -12,6 +12,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <LoginProvider>
         <RouterProvider router={routes} />
         <Toaster />
+        {/* Se monta el componente en el archivo raiz del proyecto para que las notificaciones que se muestran se visualizen en toda la pagina */}
       </LoginProvider>
     </UserProvider>
   </React.StrictMode>
