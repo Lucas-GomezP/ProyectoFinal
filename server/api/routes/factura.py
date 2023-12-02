@@ -1,5 +1,5 @@
 from api import app
-from api.models.factura import Factura,ElementoDetalleFactura
+from api.models.factura import Factura
 from flask import jsonify, request #permite devolver json
 from api.utils import token_required, factura_resource, user_resources, client_resource
 from api.db.db import mysql
@@ -40,7 +40,7 @@ def get_factura_by_id(user_id, factura_id):
 def crear_fc(user_id,client_id):
     try:       
         datos = request.get_json()         
-        print('datos', datos)
+        
         new_factura = Factura.create_fc(user_id,client_id,datos)
 
         return jsonify(new_factura),201        
