@@ -50,7 +50,7 @@ def create_user():
         cur = mysql.connection.cursor()
         cur = mysql.connection.cursor()
         data = request.get_json()
-        message = "Error al registrarse"
+        message = "message"
 
         # Se verifica si el usuario ya existe
         cur.execute("SELECT * FROM usuarios WHERE nombreusuario = %s", (data['nombreusuario'],))
