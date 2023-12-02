@@ -11,7 +11,7 @@ export const SignIn = () => {
   const navigate = useNavigate()
   const { register, handleSubmit } = useForm()
   const { user } = useContext(UserContext)
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     // Se configura la peticion que se le hace al back para poder crear un nuevo usuario
     const requestOptions = {
       method: 'POST',
@@ -29,15 +29,22 @@ export const SignIn = () => {
       })
     }
     try {
-      fetch(API_BASE_URL + ENDPOINTS.signIn, requestOptions)
-        .then(res => res.json())
-        .then(data => {
-          toast.success('registro exitoso')
-          return navigate('/')
-        })
+      const response = await fetch(API_BASE_URL + ENDPOINTS.signIn, requestOptions)
+      if (!response.ok) {
+        // Si la respuesta no es exitosa, intentamos obtener el mensaje de error del cuerpo de la respuesta
+        const errorData = await response.json()
+        // Si hay un mensaje de error en la respuesta, lo utilizamos
+        if (errorData && errorData.message) {
+          throw new Error(errorData.message)
+        } else {
+          throw new Error('Error al registrarse intente nuevamente')
+        }
+      }
+      toast.success('registro exitoso')
+      return navigate('/')
     } catch (error) {
       console.error(error)
-      toast.error('error')
+      toast.error(error.message)
     }
   })
 

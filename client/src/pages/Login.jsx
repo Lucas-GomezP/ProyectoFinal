@@ -10,6 +10,7 @@ export const Login = () => {
   // LLamamos el hook y obtenemos las funcionalidades que necesitamos
   const { register, handleSubmit } = useForm()
   const { user, handleUser } = useContext(UserContext)
+
   const onSubmit = handleSubmit(async (data) => {
     const requestOptions = {
       method: 'POST',
@@ -21,8 +22,14 @@ export const Login = () => {
     try {
       const response = await fetch(API_BASE_URL + ENDPOINTS.login, requestOptions)
       if (!response.ok) {
-        // Si la respuesta no es exitosa se lanza un error
-        throw new Error('Error en la autenticacion')
+        // Si la respuesta no es exitosa, intentamos obtener el mensaje de error del cuerpo de la respuesta
+        const errorData = await response.json()
+        // Si hay un mensaje de error en la respuesta, lo utilizamos
+        if (errorData && errorData.message) {
+          throw new Error(errorData.message)
+        } else {
+          throw new Error('Error al iniciar sesion')
+        }
       }
       const responseData = await response.json()
       localStorage.clear()
@@ -33,7 +40,7 @@ export const Login = () => {
       toast.success('Inicio de sesion exitoso')
     } catch (error) {
       console.error(error)
-      toast.error('Error en el nombre del usuario y/o contraseña')
+      toast.error(error.message)
     }
   })
 
