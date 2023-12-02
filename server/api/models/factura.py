@@ -374,11 +374,6 @@ class ElementoDetalleFactura:
 
     #tipo de dato de la lista de facturas
     def __init__(self, row):
-        # self._id_detalle_factura = row["id_detalle_factura"]
-        # self._id_factura = row["id_factura"]
-        # self._id_oferta = row["id_oferta"]        
-        # self._importe = row["importe"]        
-        # self._cantidad = row["cantidad"]
         self._id_detalle_factura = row[0]
         self._id_factura = row[1]
         self._id_oferta = row[2]        
