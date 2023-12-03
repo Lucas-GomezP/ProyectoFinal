@@ -200,19 +200,25 @@ client/
   * Si no se tiene creado el usuario se debe realizar con la misma informacion puesta en el archivoo db.py
   * A continuacion crear la base de datos y sus respectivas tablas con la informacion del archivo database.sql
 2. Inicializar el servidor:
-  * Desde la carpeta ./server utilizar:
+  * Si no se tienen instaladas las dependencias, desde la carpeta ./server:
+  ```bash
+  py 3 -m venv .venv
+
+  pip install -r requirements.txt
   ```
+  * Una vez instaladas las dependencias:
+  ```bash
   .venv\Scripts\activate
 
   py main.py
   ```
 3. Inicializar el servidor:
   * Si no se tienen instaladas las dependencias, desde la carpeta ./client:
-  ```
+  ```bash
   npm install
   ```
   * Una vez instaladas las dependencias:
-  ```
+  ```bash
   npm run dev
   ```
 4. Una vez funcionando la base de datos con la informacion dada, desde la pagina base del front (http://localhost:5173) ingresar con uno de los usuarios ya registrados
