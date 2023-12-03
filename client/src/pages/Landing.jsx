@@ -7,6 +7,7 @@ import { PreguntasFrecuentes } from '../components/FAQ'
 import { Link } from 'react-router-dom'
 import { useContext } from 'react'
 import { LoginContext } from '../context/isLogin'
+import { Presentation } from '../components/Presentation'
 
 export function Landing () {
   // Se trae el contexto de Login para poder manejar a donde redirige el boton "empezar"
@@ -35,6 +36,7 @@ export function Landing () {
       <Link className='flex justify-center text-white hover:bg-[#fff] hover:text-black border-solid border border-black rounded-lg p-1.5 w-1/4 bg-[#a855f7] m-auto mt-3' to={isLogin ? '/dashboard' : '/login'}>Empezar</Link>
       <Link className='flex justify-center text-white hover:bg-[#fff] hover:text-black border-solid border border-black rounded-lg p-1.5 w-1/4 bg-[#a855f7] m-auto mt-3' to='/apidoc'>Doc. API</Link>
       <PreguntasFrecuentes />
+      <Presentation className='flex' />
       <Footer />
     </main>
   )
