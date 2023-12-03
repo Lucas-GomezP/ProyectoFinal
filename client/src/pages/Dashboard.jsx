@@ -322,7 +322,7 @@ const ControlStock = ({ data }) => {
           ? <p className='text-red-500 font-bold text-center'>No hay productos y/o servicios con ese stock minimo</p>
           : <tbody>
           {data?.map(d => {
-            if (d.stock <= minStock) {
+            if (d.tipo === 'P' && d.stock <= minStock) {
               return (
                <tr key={d.id_oferta} className='border-b'>
                  <td className='text-center'>{d.nombre}</td>
