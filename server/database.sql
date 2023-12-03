@@ -1,18 +1,18 @@
 CREATE DATABASE IF NOT EXISTS  db_api_facturacion;
 USE db_api_facturacion;
 
-CREATE TABLE IF NOT EXISTS personas(
-    id_persona INT(10) NOT NULL AUTO_INCREMENT,
-    tipo VARCHAR(255) NOT NULL, /*Persona fisica o juridica*/
-    cuil_cuit int (11),
-    nombre VARCHAR(255) NOT NULL,
-    apellido VARCHAR(255) NOT NULL,
-    dni INT(8) NOT NULL,
-    domicilio VARCHAR(255),
-    telefono INT(12),
-    email VARCHAR(255) NOT NULL,
-    PRIMARY KEY (id_persona)
-); 
+-- CREATE TABLE IF NOT EXISTS personas(
+--     id_persona INT(10) NOT NULL AUTO_INCREMENT,
+--     tipo VARCHAR(255) NOT NULL, /*Persona fisica o juridica*/
+--     cuil_cuit int (11),
+--     nombre VARCHAR(255) NOT NULL,
+--     apellido VARCHAR(255) NOT NULL,
+--     dni INT(8) NOT NULL,
+--     domicilio VARCHAR(255),
+--     telefono INT(12),
+--     email VARCHAR(255) NOT NULL,
+--     PRIMARY KEY (id_persona)
+-- ); 
 
 CREATE TABLE IF NOT EXISTS usuarios(
     id_usuario INT(10) NOT NULL AUTO_INCREMENT,
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS oferta(
     nombre VARCHAR(255) NOT NULL,
     tipo CHAR(1), /*P si es producto, S si es servicio*/
     descripcion VARCHAR(255),
-    precio decimal(2),
+    precio decimal(10),
     stock INT(10),
     disponibilidad BOOLEAN,
     id_usuario INT(10),
@@ -131,6 +131,7 @@ INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VAL
 INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('GABY', '1234');
 INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('LUQUITAS', '1234');
 INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('FACU', '1234');
+INSERT INTO `db_api_facturacion`.`usuarios` (`nombreusuario`, `contrasenia`) VALUES ('PRUEBA', '1234');
 
 UPDATE usuarios SET nombre = "ALE", apellido = "Grosso", dni = "27708257", domicilio = "Av. Siempreviva 223", telefono = "2915714472", email = "alegrosso@email.com" WHERE id_usuario = 1;
 
@@ -141,7 +142,7 @@ UPDATE usuarios SET nombre = "GABY", apellido = "Rodríguez", dni = "27654321", 
 UPDATE usuarios SET nombre = "Lucas", apellido = "Gómez", dni = "28901234", domicilio = "Av. Primavera 123", telefono = "3312345678", email = "pablogomez@email.com" WHERE id_usuario = 3;
 
 -- Para id_usuario = 4
-UPDATE usuarios SET nombre = "Marina", apellido = "Hernández", dni = "29876543", domicilio = "Calle Naranja 89", telefono = "3412345678", email = "marinahernandez@email.com" WHERE id_usuario = 4;
+UPDATE usuarios SET nombre = "Facundo", apellido = "Romo", dni = "29876543", domicilio = "Calle Naranja 89", telefono = "3412345678", email = "marinahernandez@email.com" WHERE id_usuario = 4;
 
 -- Para id_usuario = 5
 UPDATE usuarios SET nombre = "Javier", apellido = "López", dni = "30987654", domicilio = "Av. Sol 456", telefono = "3512345678", email = "javierlopez@email.com" WHERE id_usuario = 5;
@@ -169,7 +170,12 @@ INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CL
 INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 2', '1');
 INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 3', '2');
 INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 4', '3');
-INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 5', '2');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('CLIENTE 5', '4');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('Pepe', '5');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('Maria', '5');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('Jose', '5');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('Julieta', '5');
+INSERT INTO `db_api_facturacion`.`clientes` (`nombre`, `id_usuario`) VALUES ('Javier', '5');
 
 /*PARA AGREGAR CAMPOS*/
 UPDATE clientes
@@ -193,11 +199,85 @@ SET cuit_cuil = '12345679875', apellido = 'Apellido 5', dni = '98765123', domici
     telefono = '1231234', email = 'a@email.com' WHERE id_cliente = 5;
 
 UPDATE clientes
-SET cuit_cuil = '12345675197', apellido = 'Apellido 6', dni = '98765785', domicilio = 'Calle 6',
-    telefono = '4561234', email = 'unica@email.com' WHERE id_cliente = 6;
+SET cuit_cuil = '1234567519', apellido = 'Florez', dni = '98765785', domicilio = 'Calle Aleatoria 22', estado = 1,
+    telefono = '2299555666', email = 'pepe@email.com' WHERE id_cliente = 6;
+UPDATE clientes
+SET cuit_cuil = '999887546', apellido = 'Gonzales', dni = '55446684', domicilio = 'Otra Calle 56', estado = 1,
+    telefono = '2299888777', email = 'maria@email.com' WHERE id_cliente = 7;
+    UPDATE clientes
+SET cuit_cuil = '8475962525', apellido = 'Perez', dni = '25361425', domicilio = 'Pellegrini 888', estado = 1,
+    telefono = '2299646454', email = 'jose@email.com' WHERE id_cliente = 8;
+    UPDATE clientes
+SET cuit_cuil = '6485320015', apellido = 'Gomez', dni = '26154836', domicilio = 'Irigoyen 888', estado = 1,
+    telefono = '2299779955', email = 'julieta@email.com' WHERE id_cliente = 9;
+    UPDATE clientes
+SET cuit_cuil = '9785456294', apellido = 'Lopez', dni = '30258496', domicilio = 'Passo 844', estado = 1,
+    telefono = '2299989888', email = 'javier@email.com' WHERE id_cliente = 10;
 
 
 -- --------------------------------------------------------------
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Procesador AMD RYZEN 3 3200G 4.0GHz Turbo + Radeon Vega 8 AM4 Wraith Stealth Cooler', 'P', 'Modelo Ryzen 3 3200G | Socket AM4 APU 3th Gen | Núcleos 4 | Frecuencia 3600.00 mhz | Proceso De Fabricación 12 nm | Chipset Gpu Radeon Vega 8 | Hilos 4 |Frecuencia Turbo 4000 mhz | Familia AMD RYZEN 3', '102750.00', '15', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Procesador AMD RYZEN 5 3600 4.2GHz Turbo AM4 Wraith Stealth Cooler', 'P', 'Modelo Ryzen 5 3600 | Socket AM4 Ryzen 3th Gen | Núcleos 6 | Frecuencia 3600.00 mhz | Proceso De Fabricación 7 nm | Chipset Gpu NO Posee Gráficos Integrados | Hilos 12 | Frecuencia Turbo 4200 mhz | Familia AMD RYZEN 5', '149450.00', '8', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Fuente Be Quiet 1000W 80 Plus Gold PURE POWER 11 Full Modular', 'P', 'Watts Nominal 1000 w | Watts Reales 1000 w | Formato ATX | Compatible Con Posición Inferior Si | Certificacion 80 Plus 80 PLUS Gold | Modo Híbrido No | Tipo De Cableado Full Modular | Ampers En Linea +12V 84 a | Fuente Digital No | Color Negro | Iluminación Sin Iluminación', '150750.00', '12', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Gabinete Antec NX292 MESH RGB Vidrio Templado', 'P', 'Ancho 206 mm | Alto 450 mm | Profundidad 406 mm | Largo Máximo Vga 320 mm | Altura Máxima Del Cooler Cpu 155.00 mm', '60500.00', '3', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Notebook Dell Inspiron 3525 IPS FHD 15.6" Ryzen 5 5625U 8GB 256GB SSD NVMe W11 Home 120Hz', 'P', 'Color Plateado | Sistema Operativo Windows 11 Home | Tipo De Cpu AMD | Tipo De Gpu AMD Integrated Graphics | Batería Extraible No | Modelo Gpu AMD Radeon Graphics | Modelo Cpu Ryzen 5 5625U | Tipo Notebook | Lector De Huellas No | Familia Del Procesador AMD RYZEN 5', '610500.00', '8', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Notebook Gamer Asus TUF FX506L FHD IPS 15.6" Core I5 10300H 16GB 512GB SSD NVMe GTX 1650 W11 Home 144Hz', 'P', 'Color Negro | Sistema Operativo Windows 11 Home | Tipo De Cpu Intel | Tipo De Gpu Nvidia GeForce | Batería Extraible No | Modelo Gpu GTX 1650 | Modelo Cpu Core i5 10300H | Tipo Notebook | Memoria Gpu 4 gb | Lector De Huellas No | Familia Del Procesador Intel Core i5', '879400.00', '22', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Monitor Gamer Samsung 24" G50 Curvo 144Hz Full HD VA FreeSync', 'P', 'Ancho 547 mm | Alto 326 mm | Espesor 90 mm | Curvatura 1800 r', '199900.00', '13', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Disco Sólido SSD M.2 ADATA 1TB XPG Spectrix S40G RGB 3500MB/s NVMe PCI-E X4', 'P', 'Tipo De Conexión M2 | Consumo 4 w | Tipo De Disco Sólido', '107250.00', '35', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Disco Solido SSD Team 512GB GX2 530MB/s', 'P', 'Tipo De Conexión SATA | Consumo 4 w | Tipo De Disco Sólido', '33700.00', '1', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Auriculares HyperX Cloud Flight Black Wireless', 'P', 'Audio 2.0 | Colores Negro | Conexión Inalámbrico | Con Micrófono Si | Tipo De Audio Real | Tipo Headset', '94600.00', '43', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Gabinete Lian Li O11 Dynamic XL ROG Certify White ARGB', 'P', 'Ancho 285 mm | Alto 513 mm | Profundidad 471 mm | Largo Máximo Vga 446 mm | Altura Máxima Del Cooler Cpu 167.00 mm', '236950.00', '3', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Monitor Smart Samsung 27" M5 Full HD VA 60Hz AirPlay2/ Netflix/ Youtube/ HBO', 'P', 'Ancho 615 mm | Alto 368 mm | Espesor 42 mm | Curvatura 0 r', '169300.00', '3', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Gabinete Lian Li Lancool 205 Mesh W White', 'P', 'Ancho 205 mm | Alto 485 mm | Profundidad 415 mm | Largo Máximo Vga 350 mm | Altura Máxima Del Cooler Cpu 160.00 mm', '78850.00', '0', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Silla Gamer Vertagear Racing Series PL-4500 Crystals from Swarovski', 'P', 'Ergonomica', '704050.00', '4', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Fuente Be Quiet 850W 80 Plus Gold PURE POWER 11 Full Modular', 'P', 'Watts Nominal 850 w | Watts Reales 850 w | Formato ATX | Compatible Con Posición Inferior Si | Certificacion 80 Plus 80 PLUS Gold | Modo Híbrido No | Tipo De Cableado Full Modular | Ampers En Linea +12V 71 a | Fuente Digital No | Color Negro | Iluminación Sin Iluminación', '128650.00', '8', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Memoria Adata DDR4 16GB (2x8GB) 4133MHz XPG Spectrix D60G RGB', 'P', 'Capacidad 16 gb | Velocidad 4133 mhz | Tipo DDR4 | Cantidad De Memorias 2 | Latencia 19 cl | Voltaje 1.40 v', '78850.00', '7', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Armado de PC', 'S', 'Union y control de funcionamiento de los componentes', '7000.00', '1', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Limpieza de gabinete', 'S', 'Limpieza de componentes', '5000.00', '1', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Instalacion de antivirus', 'S', 'Antivirus certificado', '10000.00', '1', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Instalacion de SO', 'S', 'Instalacion de sistema operativo a eleccion entre Windows 10 / Windows 11', '20000.00', '1', '1', '5', 'A');
+INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Instalacion herramientas Adobe', 'S', 'Instalacion de Photoshop, Illustrator, Premier', '20000.00', '1', '1', '5', 'A');
+
+INSERT INTO `db_api_facturacion`.`facturas` (`id_usuario`, `id_cliente`, `fecha`, `importe_total`, `estado`) VALUES ('5', '7', '2023-11-30', '320900', '1');
+INSERT INTO `db_api_facturacion`.`facturas` (`id_usuario`, `id_cliente`, `fecha`, `importe_total`, `estado`) VALUES ('5', '7', '2023-12-1', '257300', '3');
+INSERT INTO `db_api_facturacion`.`facturas` (`id_usuario`, `id_cliente`, `fecha`, `importe_total`, `estado`) VALUES ('5', '6', '2023-12-1', '340400', '1');
+INSERT INTO `db_api_facturacion`.`facturas` (`id_usuario`, `id_cliente`, `fecha`, `importe_total`, `estado`) VALUES ('5', '6', '2023-12-2', '879400', '4');
+
+
+INSERT INTO `db_api_facturacion`.`detalle_facturas` (`id_factura`, `id_oferta`, `importe`, `cantidad`) VALUES ('1', '1', '102750', '1'), ('1', '3', '150750', '1'), ('1', '9', '33700', '2');
+INSERT INTO `db_api_facturacion`.`detalle_facturas` (`id_factura`, `id_oferta`, `importe`, `cantidad`) VALUES ('2', '15', '128650', '2');
+INSERT INTO `db_api_facturacion`.`detalle_facturas` (`id_factura`, `id_oferta`, `importe`, `cantidad`) VALUES ('3', '16', '78850', '4'), ('3', '18', '5000', '1'), ('3', '21', '20000', '1');
+INSERT INTO `db_api_facturacion`.`detalle_facturas` (`id_factura`, `id_oferta`, `importe`, `cantidad`) VALUES ('4', '6', '879400', '1');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Elegant Soft Mouse', 'S', 'Carbonite web goalkeeper gloves are ergonomically designed to give easy fit', '844.00', '5', '1', '4', 'A');
 INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Small Cotton Table', 'S', 'New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016', '436.00', '3', '1', '1', 'A');
 INSERT INTO `db_api_facturacion`.`oferta` (`nombre`, `tipo`, `descripcion`, `precio`, `stock`, `disponibilidad`, `id_usuario`, `estado`) VALUES ('Luxurious Cotton Bacon', 'S', 'New ABC 13 9370, 13.3, 5th Gen CoreA5-8250U, 8GB RAM, 256GB SSD, power UHD Graphics, OS 10 Home, OS Office A & J 2016', '724.00', '8', '1', '4', 'A');
