@@ -254,7 +254,7 @@ export const Offer = () => {
                     onClick={() => showingProductInfo(product)}
                     key={product?.id_oferta} className='h-14 border-b text-sm md:text-base border-slate-200 hover:bg-slate-200 hover:cursor-pointer'
                   >
-                    <td className='h-14 py-1 pl-2 md:truncate'>{product?.nombre}</td>
+                    <td className='h-14 py-1 pl-2'>{product?.nombre}</td>
                     <td className='h-14 py-1 text-center'>{product?.stock}</td>
                     <td className='h-14 py-1 text-ellipsis overflow-hidden hidden md:inline-block'>{product?.descripcion}</td>
                     <td className='h-14 py-1 pr-2 text-center'>${product?.precio}</td>
