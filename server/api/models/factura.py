@@ -449,21 +449,3 @@ class ElementoDetalleFactura:
         else:
             cur.close()
             return [], 0 # No se insertaron registros, retornar lista vacía
-       
-
-
-
-class ListadoElementoDetalleFactura:
-    #lista del detalle de la factura y sus metodos
-    def __init__(self):
-        self._elementos = []
-
-    def agregarElemento(self, elemento):
-        self._elementos.append(elemento)
-
-    def getElementosPorIdFactura(self, id_factura):
-        return [elemento for elemento in self.elementos if elemento.id_factura == id_factura]
-
-    def getAll(self):
-        return self._elementos
-    

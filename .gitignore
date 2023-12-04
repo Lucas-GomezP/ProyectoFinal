@@ -27,3 +27,7 @@ dist-ssr
 --pycache__/
 server/__pycache__/
 server/api/__pycache__/
+server/__pycache__/*.pyc
+server/api/__pycache__/*.pyc
+server/*/*.pyc
+server/*/__pycache__
