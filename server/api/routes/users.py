@@ -33,7 +33,7 @@ def login():
     print('entro')
     return jsonify({"token": token, "username": auth.username , "id": row[0]})
 
-
+# Ruta de prueba
 @app.route('/users')
 def get_all():
     cursor = mysql.connection.cursor()
